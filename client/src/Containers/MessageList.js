@@ -12,6 +12,7 @@ class Messagelist extends React.Component{
     render(){
         const { messages, removeMessage, currentUser } = this.props;
         let messageList = messages.map(m => {
+            
             return (
                 <MessageItem 
                     key={m._id} 
@@ -26,7 +27,7 @@ class Messagelist extends React.Component{
 
         // return messageList;
         return (
-            <div className="row col-sm-8">
+            <div className="row col-md-8">
                 <div className="offset-1 col-sm-10">
                     <ul className="list-group" id="messages">
                         {messageList}

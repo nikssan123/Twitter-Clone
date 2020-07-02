@@ -57,6 +57,7 @@ ul.navbar-nav li{
 #messages .list-group-item{
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
   padding: 7px 20px 12px;
 }
 
@@ -79,4 +80,60 @@ ul.navbar-nav li{
 a.btn.btn-danger,
 a.btn.btn-danger:hover{
   color: white;
+  float: right;
+  border-radius: 18px;
+}
+
+.show-user{
+  /* display: flex; */
+  background-color: white;
+  margin-bottom: 15px;
+  padding: 20px;
+  border-radius: 15px;
+  overflow: hidden;
+}
+
+.show-user .email{
+  display: block;
+  font-style: italic;
+}
+
+.show-user button{
+  position: relative;
+  float: right;
+}
+
+.user-avatar{
+  border-radius: 50%;
+  position: relative;
+  top: 50px;
+  left: 10px;
+}
+
+.show-user p {
+  font-weight: bold;
+  font-size: 20px;
+  margin-top: 50px;
+}
+
+.cover{
+  /* position: absolute;
+  top: 0;
+  left: 0; */
+  width: 100%;
+  height: 200px;
+  /* background-color: black; */
+  background-image: url("./Images/cover1.jpg");
+  z-index: -1;
+}
+
+
+.user-sidebar{
+  width: 100%;
+  border-radius: 50px;
+}
+
+.user-sidebar img{
+  border-top-left-radius: 50px;
+  border-top-right-radius: 50px;
 }

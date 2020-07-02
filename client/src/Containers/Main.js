@@ -7,6 +7,7 @@ import { authUser } from "../Store/Actions/auth";
 import { removeError } from "../Store/Actions/errors";
 import withAuth  from "../Hocs/withAuth";
 import MessageForm from "../Containers/MessageForm";
+import UserShow from "../Components/UserShow";
 
 const Main = props => {
     const { authUser, errors, removeError, currentUser } = props;
@@ -27,7 +28,7 @@ const Main = props => {
                                 heading ="Welcome Back" 
                                 {...props}
                             />
-                        )
+                        ) 
                 }}/>
                 <Route 
                     exact 
@@ -49,6 +50,12 @@ const Main = props => {
                     exact
                     path="/users/:id/messages/new" 
                     component={withAuth(MessageForm)} 
+                />
+                <Route 
+                    exact
+                    path="/users/:username"
+                    render={props => (<UserShow  currentUser={currentUser} {...props}/>)}
+                    key={window.location.pathname}
                 />
             </Switch>
         </div>

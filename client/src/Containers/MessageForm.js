@@ -25,13 +25,16 @@ class MessageForm extends React.Component{
                 {this.props.errors.message && 
                     (<div className="alert alert-danger">{this.props.errors}</div>
                 )}
-                <input  
+                <textarea
+                    style={{resize: "none"}}
+                    rows={5}  
+                    placeholder="Enter your message..."
                     type="text"
                     className="form-control"
                     value={this.state.message}
                     onChange={e => this.setState({message: e.target.value})} 
                 />
-                <button className="btn btn-success pull-right" type="submit">Add New Message</button>
+                <button style={{marginTop: "20px"}} className="btn btn-success pull-right" type="submit">Add New Message</button>
             </form>
         );
     }
