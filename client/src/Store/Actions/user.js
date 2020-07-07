@@ -1,5 +1,5 @@
 import { apiCall } from "../../Services/api";
-import { SHOW_USER_INFO, DELETE_USER_MESSAGE } from "../actionTypes";
+import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE } from "../actionTypes";
 import { addError } from "./errors";
 
 export const loadUserInfo = (user, messages) => {
@@ -14,6 +14,13 @@ export const remove = id => {
     return {
         type: DELETE_USER_MESSAGE,
         id
+    }
+}
+
+export const newChatMessage = (from) => {
+    return {
+        type: NEW_CHAT_MESSAGE,
+        from
     }
 }
 
@@ -64,5 +71,14 @@ export const deleteMessage = (userId, messageId) => {
                 dispatch(remove(messageId));
             })
             .catch(err => dispatch(addError(err.message))); 
+    }
+}
+
+export const addMessageNotification = (to, from) => {
+    return dispatch => {
+        return apiCall("put", `/api/users/${to}/${from}`).then(user => {
+            
+            dispatch(newChatMessage(user.chatMessages.from));
+        }).catch(err => dispatch(addError(err)));
     }
 }

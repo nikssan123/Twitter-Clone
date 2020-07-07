@@ -1,4 +1,5 @@
 import React from "react";
+// import io from "socket.io-client";
 
 class AuthForm extends React.Component{
     constructor(props){
@@ -22,17 +23,20 @@ class AuthForm extends React.Component{
     }
 
     handleSubmit(e){
-        e.preventDefault();
+        
         const authType = this.props.signUp ? "signup" : "signin";
-        this.props.onAuth(authType, this.state).then(() => {
+        this.props.onAuth(authType, this.state).then(() => {            
+           
             this.props.history.push("/");
         }).catch(()=> {
             return;
-        })
+        });
+
+        e.preventDefault();
     }
 
     render(){
-        const { email, username, password, profileImageUrl } = this.state;
+        const { email, username, } = this.state;
         const { heading, buttonText, signUp, errors, history, removeError } = this.props;
         
         history.listen(() => {

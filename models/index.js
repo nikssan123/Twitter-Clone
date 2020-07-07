@@ -6,7 +6,8 @@ mongoose.connect("mongodb://localhost/warbler", {
     keepAlive: true,
     useNewUrlParser: true,
     useUnifiedTopology: true,
-    useCreateIndex: true 
+    useCreateIndex: true ,
+    useFindAndModify: false
 }, () => {
     console.log("Connected to the DB");
 });

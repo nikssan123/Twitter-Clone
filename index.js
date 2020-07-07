@@ -3,6 +3,8 @@ const express = require("express");
 const app = express();
 const cors = require("cors");
 const bodyParser = require("body-parser");
+const http = require("http").createServer(app);
+const io = require("socket.io")(http);
 
 const { loginRequired, ensureCorrectUser } = require("./middleware/auth");
 
@@ -20,6 +22,33 @@ const PORT = process.env.PORT || 8080;
 app.use(cors());
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({extended: true}));
+
+//set up socket.io for the chat
+
+let connectedUsers = {};
+
+io.on("connection", socket => {
+    socket.on("register", info => {
+        socket.username = info.username;
+        connectedUsers[info.username] = socket.id;
+        
+        console.log("registed");
+        
+    });
+
+    socket.on("private-message", ({user, to, message}) => {
+        
+        console.log("in private");
+        if(connectedUsers[to]){
+            console.log(connectedUsers[to]);
+            // io.to(connectedUsers[to]).emit("private-message", {message, user});
+            io.to(connectedUsers[to]).emit("private-message", {message, user});
+            
+        }
+         
+     });
+    
+}); 
 
 //router
 app.use("/api/auth", authRoutes);
@@ -48,6 +77,6 @@ app.use((req, res, next) => {
 app.use(errorHandler);
 
 
-app.listen(PORT, () => {
+http.listen(PORT, () => {
     console.log(`Server is starting on port ${PORT}`);
 });

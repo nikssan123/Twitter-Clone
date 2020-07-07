@@ -1,8 +1,12 @@
-import { SET_CURRENT_USER } from "../actionTypes";
+import { SET_CURRENT_USER, NEW_CHAT_MESSAGE } from "../actionTypes";
 
 const DEFAULT_STATE = {
     isAuthenticated: false,
-    user: {}
+    user: {},
+    chatMessages: {
+        from: "",
+        messages: []
+    }
 };
 
 export default function (state = DEFAULT_STATE, action){
@@ -12,6 +16,15 @@ export default function (state = DEFAULT_STATE, action){
                 isAuthenticated: Boolean(Object.keys(action.user).length),
                 user: action.user
             };
+        case NEW_CHAT_MESSAGE:
+            const chatMessages = {
+                from: action.from,
+                messages: [...state.chatMessages.messages, action.newMessage]
+            }
+            return {
+                ...state,
+                chatMessages
+            }
         default:
             return state;
     }

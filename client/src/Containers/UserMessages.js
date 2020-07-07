@@ -26,7 +26,6 @@ class UserMessage extends React.Component{
     
     componentDidMount(){
         const username = this.props.match.params.username;
-        
         this.props.fetchUserInfo(username).then(() => {
             const { user, currentUser } = this.props;
             user.followers.forEach(user => {
@@ -107,7 +106,7 @@ class UserMessage extends React.Component{
         if(this.state.followersList.length > 0){
             followers = this.state.followersList.map(u => {
                 return (
-                    // <li key={u._id}><Link to={`/users/${u.username}`}>{u.username}</Link></li>
+                    // <li key={u._id}><Link onClick={this.rerender} to={`/users/${u.username}`}>{u.username}</Link></li>
                     <li key={u._id}>{u.username}</li>
                 );
             }); 
@@ -130,11 +129,13 @@ class UserMessage extends React.Component{
                         
                         <p>@{user.username}</p>
                         <span className="email">{user.email}</span>
+                        
                         <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Followers: </a></strong><span class="badge badge-secondary">{this.state.followers}</span>
                         {currentUser &&  !isSameUser && ( !this.state.isFollowing ?
                             <button onClick={() => {this.handleFollow(user, currentUser)}} className="btn btn-primary ">Follow</button>
                             : <button onClick={() => {this.handleUnfollow(user, currentUser)}} className="btn btn-primary ">Unfollow</button>
                         )}
+                        <Link to={`/chat/${user.username}`}>Direct Message</Link>
                         {/* <button onClick={() => {this.handleClick(user, currentUser)}} className="btn btn-primary ">Follow</button> */}
                     </div>
                     <ul className="list-group" id="messages">

@@ -1,7 +1,7 @@
 import React from "react";
 import { connect } from "react-redux";
 
-export default function withAuth(ComponentToBeRendered){
+export default function withAuth(ComponentToBeRendered, socket){
     class Authenticate extends React.Component{
         componentDidMount(){
             if(this.props.isAuthenticated === false){
@@ -16,7 +16,7 @@ export default function withAuth(ComponentToBeRendered){
         }
         
         render(){
-            return <ComponentToBeRendered {...this.props} />;
+            return <ComponentToBeRendered {...this.props}  socket={socket} />;
         }
 
         

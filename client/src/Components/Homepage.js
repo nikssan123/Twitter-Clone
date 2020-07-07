@@ -2,7 +2,8 @@ import React from "react";
 import { Link } from "react-router-dom";
 import MessageTimeline from "../Components/MessageTimeline";
 
-const Homepage = ({currentUser}) => {
+
+const Homepage = ({currentUser, socket}) => {
     if(!currentUser.isAuthenticated){
         return (
             <div className="home-hero">
@@ -11,13 +12,16 @@ const Homepage = ({currentUser}) => {
                 <Link to="/signup" className="btn btn-primary">Sign Up</Link>
             </div>
        );
+    }else{
+        
+        return (
+            <div>
+                <MessageTimeline profileImageUrl={currentUser.user.profileImageUrl} username={currentUser.user.username} socket={socket}/>
+            </div>
+        )
     }
 
-    return (
-        <div>
-            <MessageTimeline profileImageUrl={currentUser.user.profileImageUrl} username={currentUser.user.username}/>
-        </div>
-    )
+    
    
 }
 

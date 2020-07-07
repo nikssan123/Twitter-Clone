@@ -69,3 +69,19 @@ exports.unfollowUser = async (req, res, next) => {
         return next(error);
     }
 }
+
+exports.newMessageNotification = async (req, res, next) => {
+    const to = req.params.username;
+    // const message = req.body.message;
+    const from = req.params.from;
+
+    try {
+        let user = await db.User.findOneAndUpdate({username: to}, {chatMessages: {from}});
+        // user.chatMessages.messages.push(message);
+        // await user.save();
+        res.json(user);
+        
+    } catch (error) {
+        return next(error);
+    }
+}

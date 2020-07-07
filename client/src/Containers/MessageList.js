@@ -7,6 +7,15 @@ class Messagelist extends React.Component{
 
     componentDidMount(){
         this.props.fetchMessages();
+
+        this.socket = this.props.socket;
+
+        let info = {
+            username: this.props.currentUser.username
+        }
+        this.socket.emit("register", info);
+        console.log(`register emiiter socket:`);
+        console.log(this.socket);
     }
 
     render(){
@@ -21,7 +30,7 @@ class Messagelist extends React.Component{
                     username={m.user.username} 
                     profileImageUrl={m.user.profileImageUrl} 
                     removeMessage={removeMessage.bind(this, m.user._id, m._id)}
-                    isCorrectUser={currentUser === m.user._id}
+                    isCorrectUser={currentUser.id === m.user._id}
                 />)
         });
 
@@ -41,7 +50,7 @@ class Messagelist extends React.Component{
 function mapStateToProps(state){
     return {
         messages: state.messages,
-        currentUser: state.currentUser.user.id
+        currentUser: state.currentUser.user
     };
 }
 
