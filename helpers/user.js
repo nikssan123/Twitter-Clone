@@ -85,3 +85,13 @@ exports.newMessageNotification = async (req, res, next) => {
         return next(error);
     }
 }
+
+exports.deleteMessageNotification = async (req, res, next) => {
+    const username = req.params.username;
+    try {
+        let user = await db.User.findOneAndUpdate({username}, {chatMessages: {}});
+        res.json(user);
+    } catch (error) {
+        return next(error);
+    }
+}

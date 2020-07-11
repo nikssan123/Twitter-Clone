@@ -7,15 +7,6 @@ class Messagelist extends React.Component{
 
     componentDidMount(){
         this.props.fetchMessages();
-
-        this.socket = this.props.socket;
-
-        let info = {
-            username: this.props.currentUser.username
-        }
-        this.socket.emit("register", info);
-        console.log(`register emiiter socket:`);
-        console.log(this.socket);
     }
 
     render(){

@@ -1,7 +1,8 @@
 import React from "react";
 import { connect } from "react-redux";
 import io from "socket.io-client";
-import { addMessageNotification } from "../Store/Actions/user"
+import { addMessageNotification, deleteNotification } from "../Store/Actions/user"
+import currentUser from "../Store/Reducers/currentUser";
 
 class Chat extends React.Component{
 
@@ -18,34 +19,22 @@ class Chat extends React.Component{
     }
 
     componentDidMount(){
-        const { currentUser, match, socket } = this.props;
+        const { currentUser, match } = this.props;
         const to = match.params.username;
-        this.socket = socket;
+        this.socket = io.connect("http://localhost:8080");
         let info = {
             username: currentUser.user.username,
             to
             // id: currentUser.user.id
         }
-        // this.socket.emit("register", info);
-        console.log(`chat socket`);
-        console.log( this.socket);
+        // this.props.addMessageNotification(to, info.username);
+        this.socket.emit("register", info);
         this.socket.on("private-message", ({message, user}) => {
-            console.log("private message from");
             this.setState({
                 messages: [...this.state.messages, {message, user}]
             });
         });
     }
-
-    // componentDidUpdate(){
-    //     this.socket.on("private-message", ({message, user}) => {
-    //         console.log("private message from");
-    //         this.setState({
-    //             messages: [...this.state.messages, {message, user}]
-    //         });
-    //     }); 
-    // }
-
 
     handleClick(e){
         // this.setState({message: e.target.value});
@@ -55,7 +44,7 @@ class Chat extends React.Component{
         
         
         if(e.keyCode == 13 && message){
-            // this.props.addMessageNotification(to, message, user);
+            this.props.addMessageNotification(to, user);
             this.setState({
                 messages: [...this.state.messages, {message, user}],
                 message: ""
@@ -79,11 +68,21 @@ class Chat extends React.Component{
     }
 
     render(){
+        //check if the username in the url is same as the current user -> if it is the same redirect the user back with history.push("/") || history.back()
+        console.log();
+        const to = this.props.history.location.pathname.split("/")[2];
+        if(to === this.props.currentUser.user.username){
+            // this.props.history.goBack();
+            this.props.history.push("/");
+        }
         const messages = this.state.messages.map((m, i) => {
             return <li key={i}>From: {m.user}: {m.message}</li>
         });;
 
-
+        this.props.history.listen(() => {
+            this.socket.disconnect();
+            this.props.deleteNotification(this.props.currentUser.user.username);
+        });
 
         return (
             <div>
@@ -103,4 +102,4 @@ function mapStateToProps(state){
     }
 }
 
-export default connect(mapStateToProps, {addMessageNotification})(Chat);
+export default connect(mapStateToProps, {addMessageNotification, deleteNotification})(Chat);

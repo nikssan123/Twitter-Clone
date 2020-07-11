@@ -1,5 +1,5 @@
 import { apiCall } from "../../Services/api";
-import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE } from "../actionTypes";
+import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE, GET_NOTIFICATION } from "../actionTypes";
 import { addError } from "./errors";
 
 export const loadUserInfo = (user, messages) => {
@@ -20,6 +20,13 @@ export const remove = id => {
 export const newChatMessage = (from) => {
     return {
         type: NEW_CHAT_MESSAGE,
+        from
+    }
+}
+
+export const notification = (from) => {
+    return{
+        type: GET_NOTIFICATION,
         from
     }
 }
@@ -78,7 +85,35 @@ export const addMessageNotification = (to, from) => {
     return dispatch => {
         return apiCall("put", `/api/users/${to}/${from}`).then(user => {
             
-            dispatch(newChatMessage(user.chatMessages.from));
+            // dispatch(newChatMessage(user.chatMessages.from));
+            return user;
         }).catch(err => dispatch(addError(err)));
+    }
+}
+
+export const checkUserNotification = username => {
+    return dispatch => {
+        // return new Promise((resolve, reject) => {
+            return apiCall("get", `/api/users/${username}`).then(res => {
+                if(res[0]){
+                    return dispatch(notification(res[0].chatMessages.from));
+                }
+                
+                // return res[0];
+            }).catch(err => {
+                dispatch(addError(err));
+                return err;
+            });
+        // });
+    }
+}
+
+export const deleteNotification = username => {
+    return dispatch => {
+        return apiCall("put", `/api/users/${username}`).then(res => {
+            return res;
+        }).catch(err => {
+            dispatch(addError(err));
+        });
     }
 }

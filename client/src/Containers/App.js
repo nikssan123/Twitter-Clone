@@ -6,6 +6,7 @@ import Navbar from "./Navbar";
 import Main from "./Main";
 import { setAuthorizationToken, setCurrentUser } from '../Store/Actions/auth';
 import jwtDecode from "jwt-decode";
+import Notifications from 'react-notifications-component';
 
 
 const store = configureStore();
@@ -24,6 +25,7 @@ function App() {
     <Provider store={store}>
       <Router>
         <div className="onboarding">
+          <Notifications isMobile={true} className="mt-md-4"/>
           <Navbar />
           <Main />
         </div>

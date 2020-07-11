@@ -8,6 +8,8 @@ import DefaultProfileImage from "../Images/default-profile-image.jpg";
 
 class UserMessage extends React.Component{
 
+    _isMountedCheck = false;
+
     constructor(props){
         super(props);
 
@@ -25,23 +27,33 @@ class UserMessage extends React.Component{
     }
     
     componentDidMount(){
+        this._isMountedCheck = true;
+
         const username = this.props.match.params.username;
         this.props.fetchUserInfo(username).then(() => {
             const { user, currentUser } = this.props;
             user.followers.forEach(user => {
                 
                 if(user._id === currentUser.user.id){
-                    this.setState({
-                        ...this.state,
-                        isFollowing: true
-                    });
+                    if(this._isMountedCheck){
+                        this.setState({
+                            ...this.state,
+                            isFollowing: true
+                        });
+                    }
+                    
                 }
             });
+            if(this._isMountedCheck) this.setState({...this.state, followers: user.followers.length, followersList: user.followers});
             
-            this.setState({...this.state, followers: user.followers.length, followersList: user.followers});
         });
 
         
+    }
+
+    componentWillUnmount(){
+        // this.abortController.abort();
+        this._isMountedCheck = false;
     }
 
     setInfoState = (state) => {
@@ -128,14 +140,27 @@ class UserMessage extends React.Component{
                         </div>
                         
                         <p>@{user.username}</p>
-                        <span className="email">{user.email}</span>
                         
-                        <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Followers: </a></strong><span class="badge badge-secondary">{this.state.followers}</span>
-                        {currentUser &&  !isSameUser && ( !this.state.isFollowing ?
-                            <button onClick={() => {this.handleFollow(user, currentUser)}} className="btn btn-primary ">Follow</button>
-                            : <button onClick={() => {this.handleUnfollow(user, currentUser)}} className="btn btn-primary ">Unfollow</button>
-                        )}
-                        <Link to={`/chat/${user.username}`}>Direct Message</Link>
+                        <div className="followers">
+                            <div>
+                                <span className="email">{user.email}</span>
+                                <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Followers: </a></strong><span className="badge badge-secondary">{this.state.followers}</span>
+                            </div>
+                            <div>
+                                <div className="links">
+                                    {currentUser && !isSameUser && (<Link className="mb-3" to={`/chat/${user.username}`}>Direct Message</Link>)}
+                                    {currentUser &&  !isSameUser && ( !this.state.isFollowing ?
+                                        <button onClick={() => {this.handleFollow(user, currentUser)}} className="btn btn-primary ">Follow</button>
+                                        : <button onClick={() => {this.handleUnfollow(user, currentUser)}} className="btn btn-primary ">Unfollow</button>
+                                    )}
+                                </div>
+                                
+                            </div>
+                                
+                        </div>
+                       
+                        
+                        
                         {/* <button onClick={() => {this.handleClick(user, currentUser)}} className="btn btn-primary ">Follow</button> */}
                     </div>
                     <ul className="list-group" id="messages">
@@ -143,12 +168,8 @@ class UserMessage extends React.Component{
                     </ul>
                 </div>
 
-                {/* <button type="button" className="btn btn-primary" data-toggle="modal" data-target="#exampleModal">
-                    Launch demo modal
-                </button> */}
-
                
-                <div className={`modal fade `} id="followers" tabindex="-1" role="dialog" aria-labelledby="showFollowers" aria-hidden="true">
+                <div className={`modal fade `} id="followers" tabIndex="-1" role="dialog" aria-labelledby="showFollowers" aria-hidden="true">
                     <div className="modal-dialog" role="document">
                         <div className="modal-content">
                             <div className="modal-header">
@@ -163,8 +184,8 @@ class UserMessage extends React.Component{
                                 {followers}
                             </ul>
                             </div>
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-danger" data-dismiss="modal">Close</button>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
                             </div>
                         </div>
                     </div>

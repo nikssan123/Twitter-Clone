@@ -9,12 +9,15 @@ const io = require("socket.io")(http);
 const { loginRequired, ensureCorrectUser } = require("./middleware/auth");
 
 const errorHandler = require("./helpers/error");
+// const {deleteMessageNotification} = require('./helpers/functions');
 
 const authRoutes = require("./routes/auth");
 const messagesRoutes = require("./routes/messages");
 const userRoutes = require("./routes/user");
 
 const db = require("./models");
+
+
 
 const PORT = process.env.PORT || 8080;
 
@@ -32,21 +35,21 @@ io.on("connection", socket => {
         socket.username = info.username;
         connectedUsers[info.username] = socket.id;
         
-        console.log("registed");
-        
     });
 
     socket.on("private-message", ({user, to, message}) => {
         
-        console.log("in private");
         if(connectedUsers[to]){
-            console.log(connectedUsers[to]);
-            // io.to(connectedUsers[to]).emit("private-message", {message, user});
             io.to(connectedUsers[to]).emit("private-message", {message, user});
-            
         }
-         
-     });
+    });
+
+    // socket.on("disconnect", () => {
+    //     console.log("ds");
+    //     const user  = deleteMessageNotification(socket.username);
+    //     console.log(user);
+    //     //Delete the chatMessages in user model -> create new route or function db.User.findoneAndUpdate({username: username}, from: "")
+    // });
     
 }); 
 

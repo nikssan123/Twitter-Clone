@@ -98,9 +98,27 @@ a.btn.btn-danger:hover{
   font-style: italic;
 }
 
-.show-user button{
+/* .show-user button{
   position: relative;
   float: right;
+} */
+
+.show-user .float-right{
+  position: relative;
+  float: right;
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 20px;
+}
+
+.show-user .followers{
+  display: flex;
+  justify-content: space-between;
+}
+
+.show-user .followers .links{
+  display: flex;
+  flex-direction: column;
 }
 
 .user-avatar{
