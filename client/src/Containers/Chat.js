@@ -1,8 +1,14 @@
 import React from "react";
 import { connect } from "react-redux";
 import io from "socket.io-client";
+import Scroll from "react-scroll-to-bottom";
 import { addMessageNotification, deleteNotification } from "../Store/Actions/user"
-import currentUser from "../Store/Reducers/currentUser";
+import { apiCall } from "../Services/api";
+import ChatMessage from "../Components/Chat/ChatMessage";
+import ChatHeader from "../Components/Chat/ChatHeader";
+import ChatInput from "../Components/Chat/ChatInput";
+import UserAside from "../Components/UserAside";
+import "../css/Chat.css"; 
 
 class Chat extends React.Component{
 
@@ -11,11 +17,14 @@ class Chat extends React.Component{
 
         this.state = {
             message: "",
-            messages : []
+            messages : [],
+            roomId: ""
+            // received: []
         }
         
         this.socket = this.props.socket;
         this.handleClick = this.handleClick.bind(this);
+        this.handleSubmit = this.handleSubmit.bind(this);
     }
 
     componentDidMount(){
@@ -30,34 +39,71 @@ class Chat extends React.Component{
         // this.props.addMessageNotification(to, info.username);
         this.socket.emit("register", info);
         this.socket.on("private-message", ({message, user}) => {
+            console.log(user);
             this.setState({
-                messages: [...this.state.messages, {message, user}]
+                messages: [...this.state.messages, {message, user, received: true}]
             });
         });
+
+        const data = {
+            username: currentUser.user.username,
+            receiver: to
+        }
+
+        apiCall("post", "/api/chats", data).then(chatRoom => {
+            const loadedMessages = chatRoom[0].messages.map(m => {
+                console.log(m);
+                return {
+                    message: m.message,
+                    user: m.from,
+                    received: m.from === to ? true : false
+                }
+            }); 
+            
+            this.setState({
+                ...this.state, 
+                roomId: chatRoom[0]._id,
+                messages: [...this.state.messages, ...loadedMessages]
+            });
+        });
+        
     }
 
     handleClick(e){
         // this.setState({message: e.target.value});
-        const message = e.target.value;
+        // const message = e.target.value;
+        const {message} = this.state;
         const user = this.props.currentUser.user.username;
         const to = this.props.match.params.username;
         
         
-        if(e.keyCode == 13 && message){
-            this.props.addMessageNotification(to, user);
-            this.setState({
-                messages: [...this.state.messages, {message, user}],
-                message: ""
-            });
-            this.socket.emit("private-message", {
-                to,
-                message,
-                user
-            });
-           
-            
+        if(e.keyCode === 13 && message){
+           this.submitFunction(message, user, to);
         }
-        
+    }
+
+    handleSubmit(e){
+        const {message} = this.state;
+        const user = this.props.currentUser.user.username;
+        const to = this.props.match.params.username;
+
+        this.submitFunction(message, user, to);
+    }
+
+    submitFunction = (message, user, to) => {
+        this.props.addMessageNotification(to, user);
+        apiCall("put", `/api/chats/${this.state.roomId}`, {from: user, message: message}).then(chat => {
+            // console.log(chat);
+        });
+        this.setState({
+            messages: [...this.state.messages, {message, user}],
+            message: ""
+        });
+        this.socket.emit("private-message", {
+            to,
+            message,
+            user,
+        });
     }
     
     handleChange = (e) => {
@@ -69,15 +115,17 @@ class Chat extends React.Component{
 
     render(){
         //check if the username in the url is same as the current user -> if it is the same redirect the user back with history.push("/") || history.back()
-        console.log();
+       
         const to = this.props.history.location.pathname.split("/")[2];
         if(to === this.props.currentUser.user.username){
             // this.props.history.goBack();
             this.props.history.push("/");
         }
         const messages = this.state.messages.map((m, i) => {
-            return <li key={i}>From: {m.user}: {m.message}</li>
-        });;
+            console.log(m);
+            return <ChatMessage key={i} from={m.received ? "received" : "outgoing"} text={m.message} user={m.user}/>
+        });
+
 
         this.props.history.listen(() => {
             this.socket.disconnect();
@@ -85,12 +133,36 @@ class Chat extends React.Component{
         });
 
         return (
-            <div>
-                <ul>
-                    {messages}
-                </ul>
-                <input value={this.state.message} name="message" onChange={this.handleChange} onKeyUp={this.handleClick} type="text" placeholder="Enter your message..."/>
+            // Add UserAside module in a new div
+            //remove the styles from the div to a class named chatContainer -> set maxHeight so the overflow works -> see if you need to use ScrollToBottom unit
+            //Add emojies -> style the chats -> add username and potentially the profile pic above the message -> add from using react-moment module
+            <div className="d-flex" style={{height: "90vh"}}>
+                {this.props.currentUser.isAuthenticated && (
+                    <UserAside  profileImageUrl={this.props.currentUser.user.profileImageUrl} username={this.props.currentUser.user.username}/>
+                )}
+                <div className="col-12 col-md-8 offset-md-1 " >
+                    <div className="chat-container">
+                        <ChatHeader user={to}/>
+                        <Scroll>
+                            <div className="message-list">
+                                {messages}
+                            </div>
+                        </Scroll>
+                        
+                        <ChatInput 
+                            value={this.state.message}
+                            onChange={this.handleChange}
+                            onKeyUp={this.handleClick}
+                            onSubmit={this.handleSubmit}
+                        />
+                    </div>
+                    
+                    
+                </div>
             </div>
+           
+
+            
            
         );
     }

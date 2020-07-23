@@ -14,6 +14,7 @@ const errorHandler = require("./helpers/error");
 const authRoutes = require("./routes/auth");
 const messagesRoutes = require("./routes/messages");
 const userRoutes = require("./routes/user");
+const chatRoutes = require("./routes/chat");
 
 const db = require("./models");
 
@@ -57,6 +58,8 @@ io.on("connection", socket => {
 app.use("/api/auth", authRoutes);
 app.use("/api/users/:id/messages", loginRequired, ensureCorrectUser, messagesRoutes);
 app.use("/api/users/:username", userRoutes);
+app.use("/api/chats/", chatRoutes);
+
 
 app.get("/api/messages", loginRequired, async (req, res, next) => {
     try {

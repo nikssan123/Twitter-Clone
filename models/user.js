@@ -31,8 +31,22 @@ const userSchema = new mongoose.Schema({
         from: {
             type: String
         },
-        messages: [String]
-    }
+        // messages: [String]
+    },
+    // chat: [
+    //     {
+    //         from: {
+    //             type: String,
+    //             message: [
+    //                 {
+    //                     message: String,
+    //                     received: Boolean
+    //                 }
+    //             ]
+    //         }
+    //     }
+    // ],
+    
 
 });
 

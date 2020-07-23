@@ -110,7 +110,6 @@ class Main extends React.Component{
                     const id = this.state.id;
                     // if(notification && from && (id >= 0 && id <= 1)){
                     if(notification && from && (id === 0)){
-                        console.log("in if");
                         let idStore = store.addNotification({
                             title: `${from} want to connect!`,
                             message: <Link onClick={() => deleteNotification(username)} style={{color: "white"}} to={`/chat/${from}`}>Click here to chat!</Link>,
@@ -196,8 +195,6 @@ class Main extends React.Component{
                         // render={props => (<Chat {...props} />)}
                         component={withAuth(Chat)}
                     />
-    
-                    
                 </Switch>
     
                 
