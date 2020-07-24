@@ -1,12 +1,15 @@
 const Chat = require("../models/Chat");
 
+const PER_PAGE = 20;
+
+
 exports.createChat = async (req, res, next) => {
-    const {username, receiver} = req.body;
+    const {username, receiver, pageNumber} = req.body;
     const room = `${username}-${receiver}`;
     const roomReversed = `${receiver}-${username}`;
     try {
-
-        const chat = await getChat(username, receiver);
+        
+        const chat = await getChat(username, receiver, pageNumber);
         if(chat.length > 0){
 
             res.json(chat);
@@ -15,6 +18,9 @@ exports.createChat = async (req, res, next) => {
                 room,
                 roomReversed
             });
+
+            
+
             res.json(newChat);
         }
         
@@ -26,11 +32,11 @@ exports.createChat = async (req, res, next) => {
 }
 
 exports.getChat = async (req, res, next) => {
-    const {username, receiver} = req.body;
+    const {username, receiver, pageNumber} = req.body;
     // const room = `${username}-${receiver}`;
     try {
-        const chat = await getChat(username, receiver);
-
+        const chat = await getChat(username, receiver, pageNumber);
+        // console.log(chat);
         res.status(200).json(chat);
     } catch (error) {
         return next(error);
@@ -68,11 +74,11 @@ exports.createMessage = async (req, res, next) => {
 }
 
 //
-const getChat = async (username, receiver) => {
+const getChat = async (username, receiver, pageNumber) => {
     const room = `${username}-${receiver}`;
-
+    const slice = (pageNumber * PER_PAGE);
     try {
-        const chat = await Chat.find({$or:[{room: room},{roomReversed: room}]});
+        const chat = await Chat.find({$or:[{room: room},{roomReversed: room}]}, { messages: { $slice:  -slice } });
         // return chat.length > 0 ? false : true;
         return chat;
     } catch (error) {

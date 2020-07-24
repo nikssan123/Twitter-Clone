@@ -101,7 +101,7 @@ export const checkUserNotification = username => {
                 
                 // return res[0];
             }).catch(err => {
-                dispatch(addError(err));
+                // dispatch(addError(err));
                 return err;
             });
         // });

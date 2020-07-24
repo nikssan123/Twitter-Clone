@@ -10,20 +10,26 @@ class MessageForm extends React.Component{
         this.state = {
             message: ""
         }
+
+        this.handleNewMessage = this.handleNewMessage.bind(this);
     }
 
-    handleNewMessage = e => {
+    handleNewMessage (e) {
         e.preventDefault();
         this.props.postNewMessage(this.state.message);
+        // console.log("hi");
         this.setState({message: ""});
+        // this.setState({});
+        // console.log(this.state);
         this.props.history.push("/");
     }
 
     render(){
+        console.log(this.props.errors);
         return (
             <form onSubmit={this.handleNewMessage}>
                 {this.props.errors.message && 
-                    (<div className="alert alert-danger">{this.props.errors}</div>
+                    (<div className="alert alert-danger">{this.props.errors.message}</div>
                 )}
                 <textarea
                     style={{resize: "none"}}

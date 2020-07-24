@@ -18,7 +18,10 @@ class Chat extends React.Component{
         this.state = {
             message: "",
             messages : [],
-            roomId: ""
+            roomId: "",
+            pageNumber: 1,
+            isLoading: false,
+            hasMore: true
             // received: []
         }
         
@@ -39,7 +42,6 @@ class Chat extends React.Component{
         // this.props.addMessageNotification(to, info.username);
         this.socket.emit("register", info);
         this.socket.on("private-message", ({message, user}) => {
-            console.log(user);
             this.setState({
                 messages: [...this.state.messages, {message, user, received: true}]
             });
@@ -47,25 +49,56 @@ class Chat extends React.Component{
 
         const data = {
             username: currentUser.user.username,
-            receiver: to
+            receiver: to,
+            pageNumber: this.state.pageNumber
         }
 
-        apiCall("post", "/api/chats", data).then(chatRoom => {
-            const loadedMessages = chatRoom[0].messages.map(m => {
-                console.log(m);
-                return {
-                    message: m.message,
-                    user: m.from,
-                    received: m.from === to ? true : false
-                }
-            }); 
-            
-            this.setState({
-                ...this.state, 
-                roomId: chatRoom[0]._id,
-                messages: [...this.state.messages, ...loadedMessages]
-            });
+        
+        this.loadChat(data);
+    }
+
+    loadChat(data){
+
+        if(this.state.isLoading || !this.state.hasMore) return;
+
+        this.setState({
+            isLoading: true
         });
+
+        apiCall("post", "/api/chats", data).then(chatRoom => {
+            let loadedMessages = [];
+            if(chatRoom[0] !== undefined){
+                loadedMessages = chatRoom[0].messages.map(m => {
+                    console.log(m);
+                    return {
+                        message: m.message,
+                        user: m.from,
+                        received: m.from === data.receiver ? true : false,
+                        created: m.date
+                    }
+                }); 
+
+                const hasMore = loadedMessages[0].message === undefined ? false : true;
+                this.setState({
+                    ...this.state, 
+                    roomId: chatRoom[0]._id,
+                    messages: [ ...loadedMessages],
+                    pageNumber: this.state.pageNumber + 1,
+                    isLoading: false,
+                    hasMore
+                });
+            }else{
+                this.setState({
+                    ...this.state,
+                    roomId: chatRoom._id,
+                    isLoading: false
+                })
+            }
+            
+
+           
+        });
+
         
     }
 
@@ -113,6 +146,26 @@ class Chat extends React.Component{
         });
     }
 
+    
+
+    handleScroll = (e) => {
+
+        const { currentUser, match } = this.props;
+        const to = match.params.username;
+
+        const top = e.target.scrollTop === 0;
+        if (top) { 
+            const data = {
+                username: currentUser.user.username,
+                receiver: to,
+                pageNumber: this.state.pageNumber,
+                
+            }
+
+            this.loadChat(data);
+        }
+    }
+    
     render(){
         //check if the username in the url is same as the current user -> if it is the same redirect the user back with history.push("/") || history.back()
        
@@ -122,8 +175,10 @@ class Chat extends React.Component{
             this.props.history.push("/");
         }
         const messages = this.state.messages.map((m, i) => {
-            console.log(m);
-            return <ChatMessage key={i} from={m.received ? "received" : "outgoing"} text={m.message} user={m.user}/>
+            if(m.message !== undefined){
+                return <ChatMessage key={i} from={m.received ? "received" : "outgoing"} text={m.message} user={m.user} created={m.created}/>
+            }
+           
         });
 
 
@@ -133,18 +188,28 @@ class Chat extends React.Component{
         });
 
         return (
-            // Add UserAside module in a new div
-            //remove the styles from the div to a class named chatContainer -> set maxHeight so the overflow works -> see if you need to use ScrollToBottom unit
             //Add emojies -> style the chats -> add username and potentially the profile pic above the message -> add from using react-moment module
             <div className="d-flex" style={{height: "90vh"}}>
                 {this.props.currentUser.isAuthenticated && (
                     <UserAside  profileImageUrl={this.props.currentUser.user.profileImageUrl} username={this.props.currentUser.user.username}/>
                 )}
                 <div className="col-12 col-md-8 offset-md-1 " >
-                    <div className="chat-container">
+                    <div className="chat-container" onScroll={this.handleScroll}>
                         <ChatHeader user={to}/>
-                        <Scroll>
-                            <div className="message-list">
+                        <Scroll  >
+                            <div className="message-list" >
+                                {(!this.state.hasMore && (
+                                    <div style={{display: "flex", justifyContent: "center", margin: "10px 0"}}>
+                                        <em>No more messages!</em>
+                                    </div>
+                                ))}
+                                {(this.state.isLoading && (
+                                    <div className="loader" style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+                                        <div className="bounce1"></div>
+                                        <div className="bounce2"></div>
+                                        <div className="bounce3"></div>
+                                    </div>
+                                ))}
                                 {messages}
                             </div>
                         </Scroll>

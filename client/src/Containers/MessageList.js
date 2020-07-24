@@ -2,6 +2,7 @@ import React from "react";
 import { connect } from "react-redux";
 import {fetchMessages, removeMessage} from "../Store/Actions/messages";
 import MessageItem from "../Components/MessageItem";
+import MessageForm from "../Containers/MessageForm";
 
 class Messagelist extends React.Component{
 
@@ -29,6 +30,7 @@ class Messagelist extends React.Component{
         return (
             <div className="row col-md-8">
                 <div className="offset-1 col-sm-10">
+                    {/* <MessageForm {...this.props}/> */}
                     <ul className="list-group" id="messages">
                         {messageList}
                     </ul>

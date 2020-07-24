@@ -66,9 +66,6 @@
     border-radius: 18px 18px 18px 0;
 }
 
-::-webkit-scrollbar{
-    display: none;
-}
 
 /* .message-text{
     background-color:  #0084FF;
@@ -87,13 +84,20 @@
     font-weight: bold;
     border-top-left-radius: 18px;
     border-top-right-radius: 18px;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px;
     /* margin: 25px; */
 }
 
 .chat-header p{
-    margin-top: 10px;
-    margin-left: 15px;
-    margin-bottom: 5px;
+    /* margin-top: 10px;
+    margin-bottom: px; */
+    margin: 10px 5px;
+    font-size: 1.2rem;
+    
 }
 
 .chat-input{
@@ -115,4 +119,63 @@
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
     padding: 10px;
+}
+
+
+/* Scrollbar Styles */
+
+::-webkit-scrollbar-track
+{
+	background-color: #f1f0f0;
+}
+
+::-webkit-scrollbar
+{
+	width: 6px;
+	background-color: #f1f0f0;
+}
+
+::-webkit-scrollbar-thumb
+{
+	background-color: #0084FF;
+}
+
+
+/* Loader styles */
+.loader > div {
+    
+
+    width: 18px;
+    height: 18px;
+    background-color: #0084FF;
+
+    border-radius: 100%;
+    display: inline-block;
+    -webkit-animation: sbouncedelay 1.4s infinite ease-in-out both;
+    animation: bouncedelay 1.4s infinite ease-in-out both;
+}
+  
+.loader .bounce1 {
+    -webkit-animation-delay: -0.32s;
+    animation-delay: -0.32s;
+}
+  
+.loader .bounce2 {
+    -webkit-animation-delay: -0.16s;
+    animation-delay: -0.16s;
+}
+  
+@-webkit-keyframes bouncedelay {
+    0%, 80%, 100% { -webkit-transform: scale(0) }
+    40% { -webkit-transform: scale(1.0) }
+}
+  
+@keyframes bouncedelay {
+    0%, 80%, 100% { 
+      -webkit-transform: scale(0);
+      transform: scale(0);
+    } 40% { 
+      -webkit-transform: scale(1.0);
+      transform: scale(1.0);
+    }
 }

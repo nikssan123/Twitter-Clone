@@ -13,7 +13,7 @@ const ChatInput = ({value, onChange, onKeyUp, onSubmit}) => {
                 placeholder="Enter your message..."
                 // style={{width: "100%", height: "100%"}}
             />
-            <i style={{color: "#0084FF"}} class="fa fa-paper-plane" onClick={onSubmit}></i>
+            <i style={{color: "#0084FF", cursor: "pointer"}} className="fa fa-paper-plane" onClick={onSubmit}></i>
         </div>
     );
 }
