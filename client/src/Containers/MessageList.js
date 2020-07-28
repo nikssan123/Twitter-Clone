@@ -2,7 +2,8 @@ import React from "react";
 import { connect } from "react-redux";
 import {fetchMessages, removeMessage} from "../Store/Actions/messages";
 import MessageItem from "../Components/MessageItem";
-import MessageForm from "../Containers/MessageForm";
+import SearchBar from "../Components/Search";
+// import MessageForm from "../Containers/MessageForm";
 
 class Messagelist extends React.Component{
 
@@ -11,7 +12,7 @@ class Messagelist extends React.Component{
     }
 
     render(){
-        const { messages, removeMessage, currentUser } = this.props;
+        const { messages, removeMessage, currentUser, history, users } = this.props;
         let messageList = messages.map(m => {
             
             return (
@@ -31,6 +32,7 @@ class Messagelist extends React.Component{
             <div className="row col-md-8">
                 <div className="offset-1 col-sm-10">
                     {/* <MessageForm {...this.props}/> */}
+                    <SearchBar history={history} users={users}/>
                     <ul className="list-group" id="messages">
                         {messageList}
                     </ul>
@@ -43,7 +45,8 @@ class Messagelist extends React.Component{
 function mapStateToProps(state){
     return {
         messages: state.messages,
-        currentUser: state.currentUser.user
+        currentUser: state.currentUser.user,
+        users: state.users.users
     };
 }
 

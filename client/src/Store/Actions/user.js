@@ -1,5 +1,5 @@
 import { apiCall } from "../../Services/api";
-import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE, GET_NOTIFICATION } from "../actionTypes";
+import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE, GET_NOTIFICATION, SET_FOLLOWING, GET_ALL_USERS } from "../actionTypes";
 import { addError } from "./errors";
 
 export const loadUserInfo = (user, messages) => {
@@ -31,10 +31,44 @@ export const notification = (from) => {
     }
 }
 
+export const loadFollowers = followers => {
+    return {
+        type: SET_FOLLOWING,
+        followers
+    }
+}
+
+export const loadUsers = users => {
+    return {
+        type: GET_ALL_USERS,
+        users
+    }
+}
+
+export const getAllUsers = () => {
+    return dispatch => {
+        return apiCall("get", "/api/users").then(users => {
+            dispatch(loadUsers(users));
+        }).catch(err => {
+            dispatch(addError(err));
+        });
+    }
+}
+
 export const fetchUserInfo = username => {
     return dispatch => {
         return apiCall("get", `/api/users/${username}`).then(res => {
             dispatch(loadUserInfo(res[0], res[0].messages));
+        }).catch(err => {
+            dispatch(addError(err));
+        });
+    }
+}
+
+export const fetchFollowers = id => {
+    return dispatch => {
+        return apiCall("get", `/api/users/${id}/followers`).then(followers => {
+            dispatch(loadFollowers(followers));
         }).catch(err => {
             dispatch(addError(err));
         });
@@ -94,7 +128,7 @@ export const addMessageNotification = (to, from) => {
 export const checkUserNotification = username => {
     return dispatch => {
         // return new Promise((resolve, reject) => {
-            return apiCall("get", `/api/users/${username}`).then(res => {
+            return apiCall("get", `/api/users/${username}/notification`).then(res => {
                 if(res[0]){
                     return dispatch(notification(res[0].chatMessages.from));
                 }

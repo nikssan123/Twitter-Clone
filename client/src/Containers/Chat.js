@@ -69,7 +69,7 @@ class Chat extends React.Component{
             let loadedMessages = [];
             if(chatRoom[0] !== undefined){
                 loadedMessages = chatRoom[0].messages.map(m => {
-                    console.log(m);
+                    
                     return {
                         message: m.message,
                         user: m.from,
@@ -82,7 +82,7 @@ class Chat extends React.Component{
                 this.setState({
                     ...this.state, 
                     roomId: chatRoom[0]._id,
-                    messages: [ ...loadedMessages],
+                    messages: [ ...loadedMessages, ...this.state.messages],
                     pageNumber: this.state.pageNumber + 1,
                     isLoading: false,
                     hasMore
@@ -124,19 +124,23 @@ class Chat extends React.Component{
     }
 
     submitFunction = (message, user, to) => {
-        this.props.addMessageNotification(to, user);
-        apiCall("put", `/api/chats/${this.state.roomId}`, {from: user, message: message}).then(chat => {
-            // console.log(chat);
-        });
-        this.setState({
-            messages: [...this.state.messages, {message, user}],
-            message: ""
-        });
-        this.socket.emit("private-message", {
-            to,
-            message,
-            user,
-        });
+        message = message.trim();
+        if(message !== ""){
+            this.props.addMessageNotification(to, user);
+            apiCall("put", `/api/chats/${this.state.roomId}`, {from: user, message: message}).then(chat => {
+                // console.log(chat);
+            });
+            this.setState({
+                messages: [...this.state.messages, {message, user}],
+                message: ""
+            });
+            this.socket.emit("private-message", {
+                to,
+                message,
+                user,
+            });
+        }
+        
     }
     
     handleChange = (e) => {
@@ -153,8 +157,10 @@ class Chat extends React.Component{
         const { currentUser, match } = this.props;
         const to = match.params.username;
 
+        // check if the scroll event is fired in the emoji picker -> if so dont load new data
+        const className = e.target.className;
         const top = e.target.scrollTop === 0;
-        if (top) { 
+        if (top && className !== "emoji-mart-scroll") { 
             const data = {
                 username: currentUser.user.username,
                 receiver: to,
@@ -164,6 +170,13 @@ class Chat extends React.Component{
 
             this.loadChat(data);
         }
+    }
+
+    handleEmojiClick = e => {
+        this.setState({
+            ...this.state,
+            message: this.state.message + e.native
+        })
     }
     
     render(){
@@ -176,7 +189,11 @@ class Chat extends React.Component{
         }
         const messages = this.state.messages.map((m, i) => {
             if(m.message !== undefined){
-                return <ChatMessage key={i} from={m.received ? "received" : "outgoing"} text={m.message} user={m.user} created={m.created}/>
+                return <ChatMessage 
+                    key={i} 
+                    from={m.received ? "received" : "outgoing"} 
+                    text={m.message} user={m.user} created={m.created}
+                />
             }
            
         });
@@ -191,12 +208,16 @@ class Chat extends React.Component{
             //Add emojies -> style the chats -> add username and potentially the profile pic above the message -> add from using react-moment module
             <div className="d-flex" style={{height: "90vh"}}>
                 {this.props.currentUser.isAuthenticated && (
-                    <UserAside  profileImageUrl={this.props.currentUser.user.profileImageUrl} username={this.props.currentUser.user.username}/>
+                    <UserAside  
+                        profileImageUrl={this.props.currentUser.user.profileImageUrl} 
+                        username={this.props.currentUser.user.username}
+                        followers={this.props.currentUser.following}
+                    />
                 )}
                 <div className="col-12 col-md-8 offset-md-1 " >
                     <div className="chat-container" onScroll={this.handleScroll}>
                         <ChatHeader user={to}/>
-                        <Scroll  >
+                        <Scroll > 
                             <div className="message-list" >
                                 {(!this.state.hasMore && (
                                     <div style={{display: "flex", justifyContent: "center", margin: "10px 0"}}>
@@ -219,6 +240,7 @@ class Chat extends React.Component{
                             onChange={this.handleChange}
                             onKeyUp={this.handleClick}
                             onSubmit={this.handleSubmit}
+                            onEmojiClick={this.handleEmojiClick}
                         />
                     </div>
                     

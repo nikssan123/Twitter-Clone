@@ -103,18 +103,37 @@
 .chat-input{
     grid-area: "input";
     border-bottom: 1px solid  #0084FF;
-    border-top: 1px solid  #0084FF;
+    /* border-top: 1px solid  #0084FF; */
     /* border: 1px solid  #0084FF; */
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
+    display: flex;
+    align-items: center;
+    /* grid-template-columns: ; */
 }
 
-.chat-input input{
-    width: 95%;
+.chat-input .inputs{
+    flex: 90%;
+    border-radius: 18px;
+    border: 1px solid black;
+    margin-left: 2px;
+    display: flex;
+    /* justify-content: space-between; */
+    align-items: center;
+}
+
+.chat-input .submit{
+    flex: 5%;
+    text-align: center;
+}
+
+.chat-input .inputs input{
+    flex: 90%;
     height: 100%;
     outline: none;
     text-decoration: none;
     border: none;
+    border-radius: 18px;
     /* background-color: #e6ecf0; */
     border-bottom-left-radius: 18px;
     border-bottom-right-radius: 18px;
@@ -178,4 +197,26 @@
       -webkit-transform: scale(1.0);
       transform: scale(1.0);
     }
+}
+
+
+@media(max-width: 991px){
+    .chat-input .inputs{
+        flex: 92%;
+    }
+    
+}
+
+@media(max-width: 400px){
+    .emoji-picker{
+        display: none;
+        font-size: 14px;
+    }
+
+    .submit{
+        font-size: 12px;
+    }
+
+    
+    
 }

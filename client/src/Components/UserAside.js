@@ -2,13 +2,18 @@ import React from "react";
 import DefaultProfileImg from "../Images/default-profile-image.jpg";
 import { Redirect, Link } from "react-router-dom";
 
-const UserAside = ({profileImageUrl, username}) => {
+const UserAside = ({profileImageUrl, username, followers}) => {
 
-    function redirect(){
-        console.log("on");
-        return (
-            <Redirect to={`/users/${username}`}/>
-        )
+    let following;
+    if(followers){
+        following = followers.map(u => {
+            return (
+                // <li key={u._id}><Link onClick={this.rerender} to={`/users/${u.username}`}>{u.username}</Link></li>
+                <li key={u._id}>{u.username}</li>
+            );
+        }); 
+    }else{
+        following = <em>You are not following anyone!</em>
     }
 
     return (
@@ -27,10 +32,37 @@ const UserAside = ({profileImageUrl, username}) => {
                 <img width="200" className="card-img-top" src={profileImageUrl || DefaultProfileImg} alt="Card image cap"/>
                 <div className="card-body">
                     <h5 className="card-title">{username}</h5>
+                    <div className="mb-2" style={{ display: "block"}}>
+                        <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Following: </a></strong><span className="badge badge-secondary">{following.length}</span>
+                    </div>
+                    
                     <Link style={{paddingBottom: "10px"}} to={`/users/${username}`}>View Profile</Link>
                     
                 </div>
             </div>
+
+
+            <div className={`modal fade `} id="followers" tabIndex="-1" role="dialog" aria-labelledby="showFollowers" aria-hidden="true">
+                    <div className="modal-dialog" role="document">
+                        <div className="modal-content">
+                            <div className="modal-header">
+                                <h5 className="modal-title" id="exampleModalLabel">You are following:</h5>
+                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                            <div className="modal-body">
+                            <p><strong>Following:</strong></p>
+                            <ul>
+                                {following}
+                            </ul>
+                            </div>
+                            <div className="modal-footer">
+                                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
         </aside>
 
     );

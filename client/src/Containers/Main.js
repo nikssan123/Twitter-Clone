@@ -4,7 +4,7 @@ import { connect } from "react-redux";
 import Homepage from "../Components/Homepage";
 import AuthForm from "../Components/AuthForm";
 import { authUser } from "../Store/Actions/auth";
-import { checkUserNotification, deleteNotification } from "../Store/Actions/user"
+import { checkUserNotification, deleteNotification, fetchFollowers, getAllUsers } from "../Store/Actions/user"
 import { removeError } from "../Store/Actions/errors";
 import withAuth  from "../Hocs/withAuth";
 import MessageForm from "../Containers/MessageForm";
@@ -95,46 +95,55 @@ class Main extends React.Component{
     }
 
     componentDidMount(){
-        const { deleteNotification, currentUser, checkUserNotification } = this.props;
+        const { deleteNotification, currentUser, checkUserNotification, fetchFollowers, getAllUsers } = this.props;
         
-        const username = currentUser.user.username;
-        
-        
-        setInterval(() => {
-            //get the path -> run the checkNotification function every time he is not chatting with somebody
-            const path = window.location.pathname.split("/")[1];
-            if(path !== "chat"){
-                checkUserNotification(username).then(() => {
-                    const notification = this.props.notifications;
-                    const from = notification.from;
-                    const id = this.state.id;
-                    // if(notification && from && (id >= 0 && id <= 1)){
-                    if(notification && from && (id === 0)){
-                        let idStore = store.addNotification({
-                            title: `${from} want to connect!`,
-                            message: <Link onClick={() => deleteNotification(username)} style={{color: "white"}} to={`/chat/${from}`}>Click here to chat!</Link>,
-                            type: "info",
-                            insert: "top",
-                            container: "top-right",
-                            animationIn: ["animated", "fadeIn"],
-                            animationOut: ["animated", "fadeOut"],
-                            dismiss: {
-                                duration: 0,
-                                //   onScreen: true,
-                                showIcon: true,
-                                //   pauseOnHover: true
-                            },
-                            onRemoval: () => {
-                                deleteNotification(username);
-                                this.setState({id: 0});
-                            }
-                        });
-                        this.setState({id: idStore});
-                    }
-                });
-            }
-        }, 4000);
+        getAllUsers();
 
+        const username = currentUser.user.username;
+        if(currentUser.user.id){
+            fetchFollowers(currentUser.user.id);
+
+
+
+            setInterval(() => {
+                //get the path -> run the checkNotification function every time he is not chatting with somebody
+                const path = window.location.pathname.split("/")[1];
+                if(path !== "chat"){
+                    checkUserNotification(username).then(() => {
+                        const notification = this.props.notifications;
+                        const from = notification.from;
+                        const id = this.state.id;
+                        // if(notification && from && (id >= 0 && id <= 1)){
+                        if(notification && from && (id === 0)){
+                            let idStore = store.addNotification({
+                                title: `${from} want to connect!`,
+                                message: <Link onClick={() => deleteNotification(username)} style={{color: "white"}} to={`/chat/${from}`}>Click here to chat!</Link>,
+                                type: "info",
+                                insert: "top",
+                                container: "top-right",
+                                animationIn: ["animated", "fadeIn"],
+                                animationOut: ["animated", "fadeOut"],
+                                dismiss: {
+                                    duration: 0,
+                                    //   onScreen: true,
+                                    showIcon: true,
+                                    //   pauseOnHover: true
+                                },
+                                onRemoval: () => {
+                                    deleteNotification(username);
+                                    this.setState({id: 0});
+                                }
+                            });
+                            this.setState({id: idStore});
+                        }
+                    });
+                }
+            }, 4000);
+    
+        }
+        
+        
+        
     }
 
     render(){
@@ -207,11 +216,10 @@ function mapStateToProps(state){
     return {
         currentUser: state.currentUser,
         errors: state.errors,
-        // user: state.user
-        notifications: state.notifications
+        notifications: state.notifications,
     }
 }
 
-export default withRouter(connect(mapStateToProps, {authUser, removeError, checkUserNotification, deleteNotification})(Main));
+export default withRouter(connect(mapStateToProps, {authUser, removeError, checkUserNotification, deleteNotification, fetchFollowers, getAllUsers})(Main));
 
 

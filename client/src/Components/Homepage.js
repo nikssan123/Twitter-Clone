@@ -4,8 +4,7 @@ import MessageTimeline from "../Components/MessageTimeline";
 
 
 
-const Homepage = ({currentUser}) => {
-
+const Homepage = ({currentUser, history}) => {
 
     if(!currentUser.isAuthenticated){
         return (
@@ -20,8 +19,14 @@ const Homepage = ({currentUser}) => {
         
 
         return (
+            
             <div>
-                <MessageTimeline profileImageUrl={currentUser.user.profileImageUrl} username={currentUser.user.username}/>
+                <MessageTimeline 
+                    history={history}
+                    profileImageUrl={currentUser.user.profileImageUrl} 
+                    username={currentUser.user.username} 
+                    followers={currentUser.following}
+                />
             </div>
         )
     }

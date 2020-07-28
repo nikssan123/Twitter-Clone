@@ -78,7 +78,7 @@ const getChat = async (username, receiver, pageNumber) => {
     const room = `${username}-${receiver}`;
     const slice = (pageNumber * PER_PAGE);
     try {
-        const chat = await Chat.find({$or:[{room: room},{roomReversed: room}]}, { messages: { $slice:  -slice } });
+        const chat = await Chat.find({$or:[{room: room},{roomReversed: room}]}, { messages: { $slice:  [-slice, PER_PAGE] } });
         // return chat.length > 0 ? false : true;
         return chat;
     } catch (error) {

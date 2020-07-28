@@ -1,4 +1,4 @@
-import { SET_CURRENT_USER, NEW_CHAT_MESSAGE } from "../actionTypes";
+import { SET_CURRENT_USER, NEW_CHAT_MESSAGE, SET_FOLLOWING } from "../actionTypes";
 
 const DEFAULT_STATE = {
     isAuthenticated: false,
@@ -6,7 +6,8 @@ const DEFAULT_STATE = {
     chatMessages: {
         from: "",
         messages: []
-    }
+    },
+    following: []
 };
 
 export default function (state = DEFAULT_STATE, action){
@@ -24,6 +25,11 @@ export default function (state = DEFAULT_STATE, action){
             return {
                 ...state,
                 chatMessages
+            }
+        case SET_FOLLOWING:
+            return {
+                ...state,
+                following: [...action.followers]
             }
         default:
             return state;

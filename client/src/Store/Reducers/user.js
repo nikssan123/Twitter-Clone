@@ -1,4 +1,4 @@
-import { SHOW_USER_INFO, DELETE_USER_MESSAGE, NEW_CHAT_MESSAGE } from "../actionTypes";
+import { SHOW_USER_INFO, DELETE_USER_MESSAGE } from "../actionTypes";
 
 const defaultState = {
     user: {},
@@ -7,7 +7,6 @@ const defaultState = {
 
 function user(state = defaultState, action){
     switch(action.type){
-            
         case SHOW_USER_INFO: 
             return {
                 user: action.user,

@@ -10,17 +10,21 @@ exports.signin = async function (req, res, next){
         let { id, username, profileImageUrl } = user;
         let isMatch = await user.comparePassword(req.body.password);
         
+        // console.log(id, username, following);
+
         if(isMatch){
             let token = jwt.sign({ 
                 id,
                 username,
-                profileImageUrl
+                profileImageUrl,
+                // following
             }, process.env.SECRET_KEY);
     
             return res.status(200).json({
                 id,
                 username,
                 profileImageUrl,
+                // following,
                 token
             })
         }else{

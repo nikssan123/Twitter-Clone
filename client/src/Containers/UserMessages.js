@@ -32,19 +32,23 @@ class UserMessage extends React.Component{
         const username = this.props.match.params.username;
         this.props.fetchUserInfo(username).then(() => {
             const { user, currentUser } = this.props;
-            user.followers.forEach(user => {
+            if(user.followers){
+                user.followers.forEach(user => {
                 
-                if(user._id === currentUser.user.id){
-                    if(this._isMountedCheck){
-                        this.setState({
-                            ...this.state,
-                            isFollowing: true
-                        });
+                    if(user._id === currentUser.user.id){
+                        if(this._isMountedCheck){
+                            this.setState({
+                                ...this.state,
+                                isFollowing: true
+                            });
+                        }
+                        
                     }
-                    
-                }
-            });
-            if(this._isMountedCheck) this.setState({...this.state, followers: user.followers.length, followersList: user.followers});
+                });
+            }
+           
+            if(this._isMountedCheck) 
+                this.setState({...this.state, followers: user.followers.length, followersList: user.followers});
             
         });
 
@@ -163,9 +167,11 @@ class UserMessage extends React.Component{
                         
                         {/* <button onClick={() => {this.handleClick(user, currentUser)}} className="btn btn-primary ">Follow</button> */}
                     </div>
-                    <ul className="list-group" id="messages">
-                    {messagesList}
-                    </ul>
+                    {messagesList.length === 0 ? <div style={{textAlign: "center"}}><em>No posts yet!</em></div> : 
+                        <ul className="list-group" id="messages">
+                            {messagesList}
+                        </ul>
+                    }
                 </div>
 
                

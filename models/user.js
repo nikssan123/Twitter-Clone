@@ -27,27 +27,16 @@ const userSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId,
         ref: "User"
     }],
+    following: [{
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "User"
+    }],
     chatMessages: {
         from: {
             type: String
         },
-        // messages: [String]
     },
-    // chat: [
-    //     {
-    //         from: {
-    //             type: String,
-    //             message: [
-    //                 {
-    //                     message: String,
-    //                     received: Boolean
-    //                 }
-    //             ]
-    //         }
-    //     }
-    // ],
     
-
 });
 
 userSchema.pre("save", async function(next){

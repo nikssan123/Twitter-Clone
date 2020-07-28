@@ -57,7 +57,7 @@ io.on("connection", socket => {
 //router
 app.use("/api/auth", authRoutes);
 app.use("/api/users/:id/messages", loginRequired, ensureCorrectUser, messagesRoutes);
-app.use("/api/users/:username", userRoutes);
+app.use("/api/users/", userRoutes);
 app.use("/api/chats/", chatRoutes);
 
 
