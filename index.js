@@ -1,6 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const app = express();
+const path = require("path");
 const cors = require("cors");
 const bodyParser = require("body-parser");
 const http = require("http").createServer(app);
@@ -9,7 +10,6 @@ const io = require("socket.io")(http);
 const { loginRequired, ensureCorrectUser } = require("./middleware/auth");
 
 const errorHandler = require("./helpers/error");
-// const {deleteMessageNotification} = require('./helpers/functions');
 
 const authRoutes = require("./routes/auth");
 const messagesRoutes = require("./routes/messages");
@@ -24,7 +24,6 @@ const PORT = process.env.PORT || 8080;
 
 
 app.use(cors());
-// app.use(bodyParser({limit: '50mb'}));
 app.use(bodyParser.json({limit: "50mb"}));
 app.use(bodyParser.urlencoded({extended: true, limit: "50mb"}));
 
@@ -45,15 +44,13 @@ io.on("connection", socket => {
             io.to(connectedUsers[to]).emit("private-message", {message, user});
         }
     });
-
-    // socket.on("disconnect", () => {
-    //     console.log("ds");
-    //     const user  = deleteMessageNotification(socket.username);
-    //     console.log(user);
-    //     //Delete the chatMessages in user model -> create new route or function db.User.findoneAndUpdate({username: username}, from: "")
-    // });
     
 }); 
+
+app.use("/public", express.static(__dirname + "/public"));
+// console.log(__dirname + "/client/public");
+// console.log(path.join(__dirname, "./client/build"));
+app.use(express.static(path.join(__dirname, "./client/build")));
 
 //router
 app.use("/api/auth", authRoutes);
@@ -74,7 +71,11 @@ app.get("/api/messages/:page", loginRequired, async (req, res, next) => {
     } catch (error) {
         return next(error);
     }
-})
+});
+
+app.use((req, res) => {
+    res.sendFile(path.join(__dirname, "./client/build/index.html"));
+});
 
 //404 error
 app.use((req, res, next) => {
