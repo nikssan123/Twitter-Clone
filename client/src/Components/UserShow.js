@@ -7,7 +7,11 @@ function UserShow(props){
     return(
         <div className="row">
             {props.currentUser.isAuthenticated && (
-                <UserAside  profileImageUrl={props.currentUser.user.profileImageUrl} username={props.currentUser.user.username} followers={props.currentUser.following}/>
+                <UserAside  
+                    profileImageUrl={props.currentUser.user.profileImageUrl} 
+                    username={props.currentUser.user.username} 
+                    followers={props.currentUser.following}
+                />
             )}
             
             <UserMessages {...props} />

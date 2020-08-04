@@ -93,7 +93,7 @@ class AuthForm extends React.Component{
                                             name="username" 
                                             onChange={this.handleChange} 
                                             value={username}
-                                            placeholder="username"
+                                            placeholder="Username"
                                         />
                                     </div>
                                 )}
