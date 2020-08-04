@@ -25,7 +25,6 @@ class MessageForm extends React.Component{
     }
 
     render(){
-        console.log(this.props.errors);
         return (
             <form onSubmit={this.handleNewMessage}>
                 {this.props.errors.message && 

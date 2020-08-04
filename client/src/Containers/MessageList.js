@@ -17,16 +17,42 @@ class Messagelist extends React.Component{
         }
     }
 
-    componentDidMount(){
-        this.props.fetchMessages();
+    handleScroll = e => {
+        const dummy = document.querySelector("#dummy");
+
+        const reached = window.scrollY >= dummy.offsetTop - window.innerHeight;
+        if(reached){
+            this.loadData();
+        }
+        
     }
 
-    loadData(data){
+    componentDidMount(){
+        // this.props.fetchMessages(this.state.pageNumber);
+        this.loadData();
+        window.addEventListener("scroll", this.handleScroll);
+    }
+
+    componentWillUnmount(){
+        window.removeEventListener("scroll", this.handleScroll);
+    } 
+
+    loadData(){
         if(!this.state.hasMore || this.state.isLoading) return;
 
         this.setState({
             isLoading: true
         });
+
+        this.props.fetchMessages(this.state.pageNumber).then((res) => {
+            const hasMore = (res && res.length === 0) ? false : true;
+            
+            this.setState({
+                isLoading: false,
+                pageNumber: this.state.pageNumber + 1,
+                hasMore
+            });
+        })
 
         //make the apiCall -> in its .then method set the isLoading to false and hasMore to whaterver is the correct value -> increment the page number
     }
@@ -63,6 +89,7 @@ class Messagelist extends React.Component{
                             <div className="bounce3"></div>
                         </div>
                     ))}
+                    <div id="dummy" style={{height: "20px"}}></div>
                 </div>
             </div>
         );

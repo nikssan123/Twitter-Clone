@@ -62,12 +62,14 @@ app.use("/api/users/", userRoutes);
 app.use("/api/chats/", chatRoutes);
 
 
-app.get("/api/messages", loginRequired, async (req, res, next) => {
+app.get("/api/messages/:page", loginRequired, async (req, res, next) => {
+    const PER_PAGE = 20;
+    const { page } = req.params;
     try {
         let messages = await db.Message.find({}).sort({createdAt: "desc"}).populate("user", {
             username: true,
             profileImageUrl: true
-        });
+        }).limit(PER_PAGE).skip((page - 1) * PER_PAGE);
         return res.status(200).json(messages);
     } catch (error) {
         return next(error);

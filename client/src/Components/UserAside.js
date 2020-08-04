@@ -33,7 +33,7 @@ const UserAside = ({profileImageUrl, username, followers}) => {
     }
 
     return (
-        <aside className="col-3 d-none d-md-block">
+        <aside className="col-3 d-none d-md-block" >
             <div className="card user-sidebar" >
                 <img width="200" height="253" className="card-img-top" src={profileImageUrl || DefaultProfileImg} alt="Card backgound cap"/>
                 <div className="card-body">
