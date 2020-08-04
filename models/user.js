@@ -16,7 +16,16 @@ const userSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    passwordResetToken: {
+        type: String
+    },
+    resetPasswordExpires: {
+        type: Date
+    },
     profileImageUrl: {
+        type: String
+    },
+    profilePicPublicId: {
         type: String
     },
     messages: [{

@@ -26,7 +26,7 @@ export function authUser(type, userData){
         return new Promise((resolve, reject) => {
             return apiCall("post", `/api/auth/${type}`, userData)
                 .then(({token, ...user}) => {
-                    console.log(user);
+                    // console.log(user);
                     localStorage.setItem("jwtToken", token);
                     setAuthorizationToken(token);
                     dispatch(setCurrentUser(user));
@@ -39,3 +39,49 @@ export function authUser(type, userData){
         })
     }
 }
+
+export function editUser(data, id){
+    return dispatch => {
+        return new Promise((resolve, reject) => {
+            return apiCall("put", `/api/auth/${id}/settings`, data).then(({token, ...user}) => {
+                localStorage.setItem("jwtToken", token);
+                setAuthorizationToken(token);
+                dispatch(setCurrentUser(user));
+                // dispatch(removeError());
+                dispatch(addError( "You successfully edited your account settings!"));
+                resolve();
+            }).catch(err => {
+                dispatch(addError(err.message));
+                reject();
+            });
+        })
+    }
+}
+
+export function updatePassword(data, token){
+    return dispatch => {
+        return new Promise((resolve, reject) => {
+            return apiCall("put", `/api/auth/reset/${token}`, data).then(({message}) => {
+                dispatch(addError({text: message, type: "success"}));
+                resolve();
+            }).catch(err => {
+                dispatch(addError({text: err.message, type: "danger" }));
+                reject();
+            });
+        })
+    }
+}
+
+export function deleteUser(id){
+    return dispatch => {
+        return new Promise((resolve, reject) => {
+            return apiCall("delete", `/api/auth/${id}`).then(() => {
+                resolve();
+            }).catch(err => {
+                debugger;
+                reject(err);
+            });
+        });
+    }
+}
+

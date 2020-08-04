@@ -151,3 +151,16 @@ export const deleteNotification = username => {
         });
     }
 }
+
+export const forgotPassword = email => {
+    return dispatch => {
+        return apiCall("post", "/api/users/forgot", {email}).then(res => {
+            dispatch(addError({text: res.message, type: "success"}));
+        }).catch(err => {
+            if(err.message){
+                dispatch(addError({text: err.message, type: "danger"}));
+            }
+           
+        });
+    }
+}

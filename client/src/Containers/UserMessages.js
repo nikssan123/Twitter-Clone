@@ -30,8 +30,13 @@ class UserMessage extends React.Component{
         this._isMountedCheck = true;
 
         const username = this.props.match.params.username;
+
+
         this.props.fetchUserInfo(username).then(() => {
             const { user, currentUser } = this.props;
+            // console.log()
+            if(Object.keys(user).length === 0) this.props.history.push("/");
+
             if(user.followers){
                 user.followers.forEach(user => {
                 
@@ -118,16 +123,16 @@ class UserMessage extends React.Component{
                 />)
         });
         
-        let followers;
+        let userFollowers;
         if(this.state.followersList.length > 0){
-            followers = this.state.followersList.map(u => {
+            userFollowers = this.state.followersList.map(u => {
                 return (
                     // <li key={u._id}><Link onClick={this.rerender} to={`/users/${u.username}`}>{u.username}</Link></li>
                     <li key={u._id}>{u.username}</li>
                 );
             }); 
         }else{
-            followers = <em>No followers yet</em>
+            userFollowers = <em>No followers yet</em>
         }
         
 
@@ -140,7 +145,7 @@ class UserMessage extends React.Component{
                     
                     <div className="show-user">
                         <div className="cover" >
-                            <img className="user-avatar" height="200" src={user.profileImageUrl || DefaultProfileImage} alt={user.username}/>
+                            <img className="user-avatar" height="200" width="200" src={user.profileImageUrl || DefaultProfileImage} alt={user.username}/>
                         </div>
                         
                         <p>@{user.username}</p>
@@ -187,7 +192,7 @@ class UserMessage extends React.Component{
                             <div className="modal-body">
                             <p><strong>Followed by:</strong></p>
                             <ul>
-                                {followers}
+                                {userFollowers}
                             </ul>
                             </div>
                             <div className="modal-footer">
@@ -202,10 +207,12 @@ class UserMessage extends React.Component{
 }
 
 function mapStateToProps(state){
+    
     return{
         currentUser: state.currentUser,
         user: state.user.user,
-        messages: state.user.messages
+        messages: state.user.messages,
+        users: state.users
     }
 }
 

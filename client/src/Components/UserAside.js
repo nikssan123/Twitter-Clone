@@ -1,11 +1,11 @@
 import React from "react";
 import DefaultProfileImg from "../Images/default-profile-image.jpg";
-import { Redirect, Link } from "react-router-dom";
+import { Link } from "react-router-dom";
 
 const UserAside = ({profileImageUrl, username, followers}) => {
 
     let following;
-    if(followers){
+    if(followers && followers.length > 0){
         following = followers.map(u => {
             return (
                 // <li key={u._id}><Link onClick={this.rerender} to={`/users/${u.username}`}>{u.username}</Link></li>
@@ -29,13 +29,15 @@ const UserAside = ({profileImageUrl, username, followers}) => {
                 {/* </div> */}
             {/* </div> */}
             <div className="card user-sidebar" >
-                <img width="200" className="card-img-top" src={profileImageUrl || DefaultProfileImg} alt="Card image cap"/>
+                <img width="200" height="253" className="card-img-top" src={profileImageUrl || DefaultProfileImg} alt="Card image cap"/>
                 <div className="card-body">
                     <h5 className="card-title">{username}</h5>
                     <div className="mb-2" style={{ display: "block"}}>
-                        <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Following: </a></strong><span className="badge badge-secondary">{following.length}</span>
+                        <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Following: </a></strong><span className="badge badge-secondary">{following.length || 0}</span>
                     </div>
-                    
+                    <div>
+                        <Link to={`/settings`}>Settings</Link>
+                    </div>
                     <Link style={{paddingBottom: "10px"}} to={`/users/${username}`}>View Profile</Link>
                     
                 </div>

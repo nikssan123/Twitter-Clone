@@ -1,13 +1,21 @@
 const Chat = require("../models/Chat");
+const User = require("../models/user");
 
 const PER_PAGE = 20;
 
 
 exports.createChat = async (req, res, next) => {
     const {username, receiver, pageNumber} = req.body;
-    const room = `${username}-${receiver}`;
-    const roomReversed = `${receiver}-${username}`;
+
+ 
+
     try {
+
+        const user = await User.findOne({username: username}).select("_id").exec();
+        const receiver1 = await User.findOne({username: receiver}).select("_id").exec();
+    
+        const room = `${user.id}-${receiver1.id}`;
+        const roomReversed = `${receiver1.id}-${user.id}`;
         
         const chat = await getChat(username, receiver, pageNumber);
         if(chat.length > 0){
@@ -47,13 +55,16 @@ exports.getChat = async (req, res, next) => {
 exports.createMessage = async (req, res, next) => {
     const { id } = req.params;
     const { from, message, profilePic } = req.body;
+
+
     try {
         const chat = await Chat.findById(id);
+        const user = await User.findOne({username: from}).select("_id").exec();
 
         //check if the user that sends the message is in the correct room
         const users = chat.room.split("-");
         
-        if(users.indexOf(from) !== -1){
+        if(users.indexOf(user.id) !== -1){
             const chatMessage = {
                 from,
                 profilePic,
@@ -75,10 +86,19 @@ exports.createMessage = async (req, res, next) => {
 
 //
 const getChat = async (username, receiver, pageNumber) => {
-    const room = `${username}-${receiver}`;
-    const slice = (pageNumber * PER_PAGE);
+    
+
+  
     try {
+
+        const user = await User.findOne({username: username}).select("_id").exec();
+        const receiver1 = await User.findOne({username: receiver}).select("_id").exec();
+    
+        const room = `${user.id}-${receiver1.id}`;
+        const slice = (pageNumber * PER_PAGE);
+
         const chat = await Chat.find({$or:[{room: room},{roomReversed: room}]}, { messages: { $slice:  [-slice, PER_PAGE] } });
+
         // return chat.length > 0 ? false : true;
         return chat;
     } catch (error) {

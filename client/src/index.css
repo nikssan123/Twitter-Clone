@@ -126,6 +126,9 @@ a.btn.btn-danger:hover{
   position: relative;
   top: 50px;
   left: 10px;
+  background-repeat: no-repeat;
+  /* background-attachment: fixed; */
+  background-position: center;
 }
 
 .show-user p {
