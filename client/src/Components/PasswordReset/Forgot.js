@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 // import { forgotPassword } from "../../Store/Actions/user";
 
 class Forgot extends React.Component{
@@ -26,27 +27,36 @@ class Forgot extends React.Component{
 
     render(){
         const { alertMessage } = this.props;
-        console.log(this.props.alertMessage);
         return (
-            <div className="row justify-content-center align-items-center">
-                <div className="col-md-6 text-center">
+            <div style={{paddingTop: "10vh"}} className="row justify-content-center align-items-center">
+                <div className="col-12 col-lg-8 text-center">
+                    {alertMessage && (
+                        <div className={`alert alert-${alertMessage.type}`} role="alert">
+                            {alertMessage.text}
+                        </div>
+                    )}
                     <h1 className="mb-3">Reset password</h1>
-                    <form onSubmit={this.handleSubmit}>
-                        <div className="form-group">
-                            {/* <label htmlFor="email">Email:</label> */}
-                            <input onChange={this.handleChange} value={this.state.email} className="form-control" type="text" name="email" placeholder="Email" required autofocus /> 
-                           
-                        </div>
-
-                        <div className="form-group">
-                            <button className="btn btn-primary btn-block">Resset Password</button>
-                        </div>
-                        {alertMessage && (
-                            <div className={`alert alert-${alertMessage.type}`} role="alert">
-                                {alertMessage.text}
+                    <div style={{ width: "40%", margin: "25px auto"}}>
+                        <form onSubmit={this.handleSubmit}>
+                            <div className="form-group">
+                                <input 
+                                    onChange={this.handleChange} 
+                                    value={this.state.email} 
+                                    className="form-control" 
+                                    type="text" name="email" 
+                                    placeholder="Email" 
+                                    required 
+                                    autofocus 
+                                /> 
                             </div>
-                        )}
-                    </form>
+
+                            <div className="form-group">
+                                <button className="btn btn-primary btn-block">Resset Password</button>
+                            </div>
+                        </form>
+                        <hr/>
+                        <Link className="float-left" to="/">Back Home</Link>
+                    </div>
                 </div>
             </div>
         )

@@ -1,4 +1,6 @@
 import React from "react";
+import { sign } from "jsonwebtoken";
+import { Link } from "react-router-dom";
 // import io from "socket.io-client";
 
 class AuthForm extends React.Component{
@@ -8,8 +10,7 @@ class AuthForm extends React.Component{
         this.state = {
             email: "",
             username: "",
-            password: "",
-            profileImageUrl: ""
+            password: ""
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -45,53 +46,73 @@ class AuthForm extends React.Component{
 
         return(
             <div>
-                <div className="row justify-content-md-center text-center">
-                    <div className="col-md-6">
-                        <form onSubmit={this.handleSubmit}>
-                            <h2>{heading}</h2>
-                            {errors.message && <div className="alert alert-danger">{errors.message}</div>}
-                            
-                            <label htmlFor="email">Email:</label>
-                            <input 
-                                type="text" 
-                                className="form-control" 
-                                id="email"
-                                name="email" 
-                                onChange={this.handleChange} 
-                                value={email}
-                            />
-                            <label htmlFor="passowrd">Password: </label>
-                            <input 
-                                type="password" 
-                                className="form-control" 
-                                id="password" 
-                                name="password" 
-                                onChange={this.handleChange} 
-                            />
-                            {signUp && (
-                                <div>
-                                    <label htmlFor="username">Username: </label>
+                <div style={{paddingTop: "10vh"}} className="row justify-content-center align-content-center">
+                    <div className="col-12 col-lg-8 text-center">
+                        {errors.message && <div className="alert alert-danger">{errors.message}</div>}
+                        <h2>{heading}</h2>
+                        <div style={{ width: "40%", margin: "25px auto"}}>
+                            <form onSubmit={this.handleSubmit}>
+                                
+                                
+                                
+                                {/* <label htmlFor="email">Email:</label> */}
+                                <div className="form-group">
                                     <input 
-                                        type="text" 
+                                        required
+                                        autoFocus={true}
+                                        type="email" 
                                         className="form-control" 
-                                        id="username"
-                                        name="username" 
+                                        id="email"
+                                        name="email" 
                                         onChange={this.handleChange} 
-                                        value={username}
-                                    />
-                                    <label htmlFor="image-url">Image URL: </label>
-                                    <input 
-                                        type="text" 
-                                        className="form-control" 
-                                        id="image-url" 
-                                        name="profileImageUrl" 
-                                        onChange={this.handleChange} 
+                                        value={email}
+                                        placeholder="Email"
                                     />
                                 </div>
-                            )}
-
-                            <button type="submit" className="btn mt-4 btn-primary btn-block btn-lg">{buttonText}</button>
-                        </form>
+                               
+                                {/* <label htmlFor="passowrd">Password: </label> */}
+                                <div className="form-group">
+                                    <input 
+                                        type="password" 
+                                        required
+                                        className="form-control" 
+                                        id="password" 
+                                        name="password" 
+                                        onChange={this.handleChange} 
+                                        placeholder="Password"
+                                    />
+                                </div>
+                                
+                                {signUp && (
+                                    <div className="form-group">
+                                        {/* <label htmlFor="username">Username: </label> */}
+                                        <input 
+                                            type="text" 
+                                            className="form-control" 
+                                            id="username"
+                                            name="username" 
+                                            onChange={this.handleChange} 
+                                            value={username}
+                                            placeholder="username"
+                                        />
+                                    </div>
+                                )}
+                                <div className="form-group">
+                                    <button type="submit" className="btn mt-4 btn-primary btn-block">{buttonText}</button>
+                                </div>
+                                <hr/>
+                                {signUp ? (
+                                    <Link className="float-left" to="/signin">Already have an account?</Link>
+                                    )
+                                :(
+                                    <div>
+                                        <Link className="float-left" to="/forgot">Forgot your password?</Link>
+                                        <Link className="float-left" to="/signup">Don't have an account?</Link>
+                                    </div>
+                                )}
+                            </form>
+                        </div>
+                        
                     </div>
                 </div>
             </div>

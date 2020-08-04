@@ -27,11 +27,16 @@ export const removeMessage = (user_id, message_id) => {
 
 export const fetchMessages = () => {
     return dispatch => {
-        return apiCall("get", "/api/messages").then(res => {
-            dispatch(loadMessages(res));
-        }).catch(err => {
-            dispatch(addError(err.message));
-        });
+        return new Promise((resolve, reject) => {
+            return apiCall("get", "/api/messages").then(res => {
+                dispatch(loadMessages(res));
+                resolve();
+            }).catch(err => {
+                dispatch(addError(err.message));
+                reject();
+            });
+        })
+        
     }
 }
 

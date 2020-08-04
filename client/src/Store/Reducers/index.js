@@ -6,6 +6,7 @@ import messages from "./messages";
 import user from "./user";
 import users from "./users";
 import notifications from "./notifications";
+import toggleSidemenu from "./toggle";
 
 
 const rootReducer = combineReducers({
@@ -14,7 +15,8 @@ const rootReducer = combineReducers({
     messages,
     user,
     users,
-    notifications
+    notifications,
+    toggleSidemenu
 });
 
 export default rootReducer;

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { Picker } from "emoji-mart";
 import 'emoji-mart/css/emoji-mart.css'
 import "../../css/Chat.css";
@@ -6,27 +6,53 @@ import "../../css/Chat.css";
 const ChatInput = ({value, onChange, onKeyUp, onSubmit, onEmojiClick}) => {
 
     const [showEmoji, setShowEmoji] = useState(false);
+    const [rightMargin, setRightMargin] = useState(undefined);
+    const [bottomMargin, setBottomMargin] = useState(undefined);
 
     const showEmojiPicker = () => {
         showEmoji ? setShowEmoji(false) : setShowEmoji(true);
     }
 
-    // const switchEmojiState = (e) => {
-    //     if(showEmoji && e.target.className !== "fa fa-smile-o"){
-    //         setShowEmoji(false);
-    //     }
+    const resize = e => {
+        
+        const width = window.innerWidth;
+        const height = window.innerHeight;
+       
+        if(width <= 991 && width > 500){
+            setRightMargin("60px");
+        }else if(width > 991){
+            setRightMargin("90px");
+        }else if(width <= 500){
+            setRightMargin("40px");
+        }
+
+        if(height >= 600){
+            setBottomMargin("50px");
+        }else if(height <= 600 && height > 470){
+            setBottomMargin("30px");
+        }else if(height <= 470 && height > 370){
+            setBottomMargin("15px");
+        }else if(height <= 370){
+            setBottomMargin("5px");
+        }
+
+    };
+
+    // const closePicker = e => {
+    //     console.log(e.target.className);
     // }
 
-    // useEffect(() => {
-    //     // document.addEventListener("mouseup", switchEmojiState);
+    useEffect(() => {
 
-    //     return () => {
-    //         document.removeEventListener("mouseup", switchEmojiState);
-    //     }
-    // })
-    
+        resize();
+        window.addEventListener("resize", resize);
+        // window.addEventListener("click", closePicker);
 
-
+        return () => {
+            window.removeEventListener("resize", resize);
+            // window.removeEventListener("click", closePicker);
+        }
+    }, []);
 
     return (
         // <div>
@@ -51,11 +77,12 @@ const ChatInput = ({value, onChange, onKeyUp, onSubmit, onEmojiClick}) => {
                     <i style={{color: "#0084FF", cursor: "pointer"}} className="fa fa-paper-plane" onClick={onSubmit}></i>
                 </div>
                 {showEmoji && 
-                <Picker 
+                <Picker
                     color={"#0084FF"} 
-                    showPreview={false} title='Pick your emoji…' 
+                    showPreview={false} 
+                    title='Pick your emoji…' 
                     emoji='point_up' 
-                    style={{position: "absolute", bottom: '50px', right: '90px', float: "right"}}
+                    style={{position: "absolute", bottom: bottomMargin, right: rightMargin, float: "right"}}
                     onSelect={(e) => {
                         onEmojiClick(e);
                         // setShowEmoji(false);

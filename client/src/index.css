@@ -162,3 +162,84 @@ a.btn.btn-danger:hover{
   border-top-left-radius: 50px;
   border-top-right-radius: 50px;
 }
+
+.sidemenu{
+  position: absolute; 
+  top: 52px; 
+  left: 0; 
+  width: 100%; 
+  height: 100%; 
+  /* background-color: black; */
+  background-image: url("./Images/nav-bg.png");
+  border: 1px solid #58aee8;
+  display: flex;
+  justify-content: center;
+  /* align-items: center; */
+  z-index: 100;
+  color: white;
+  animation: leftSlide 0.5s ease-out forwards;
+}
+
+.sidemenu ul {
+  list-style: none;
+  text-align: center;
+  transform: translateY(25%);
+}
+
+
+.sidemenu ul li{
+  font-size: 24px;
+  padding: 10px 0;
+  opacity: 0.8;
+}
+
+.sidemenu ul li a{
+  font-size: 24px;
+  padding: 10px 0;
+  opacity: 0.8;
+  color: white;
+}
+
+.sidemenu ul li i {
+  margin-right: 5px;
+}
+
+.sidemenu ul li:hover{
+  opacity: 1;
+  transform: scale(1.2);
+
+}
+
+@keyframes leftSlide {
+  0%{
+    transform: translateX(-60px);
+  }
+
+  100%{
+    transform: translateX(0);
+  }
+}
+
+
+.toggle{
+  position: absolute;
+  width: 40px;
+  height: 40px;
+  background-color: #58aee8;
+}
+
+.toggle::before{
+  content: "\f0c9";
+  font-family: "fontAwesome";
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  text-align: center;
+  line-height: 40px;
+  font-size: 24px;
+  color: white;
+}
+
+.toggle.active::before{
+  content: "\f00d";
+}

@@ -7,8 +7,28 @@ import SearchBar from "../Components/Search";
 
 class Messagelist extends React.Component{
 
+    constructor(props){
+        super(props);
+
+        this.state = {
+            pageNumber: 1,
+            isLoading: false,
+            hasMore: true
+        }
+    }
+
     componentDidMount(){
         this.props.fetchMessages();
+    }
+
+    loadData(data){
+        if(!this.state.hasMore || this.state.isLoading) return;
+
+        this.setState({
+            isLoading: true
+        });
+
+        //make the apiCall -> in its .then method set the isLoading to false and hasMore to whaterver is the correct value -> increment the page number
     }
 
     render(){
@@ -36,6 +56,13 @@ class Messagelist extends React.Component{
                     <ul className="list-group" id="messages">
                         {messageList}
                     </ul>
+                    {(this.state.isLoading && (
+                        <div className="loader" style={{display: "flex", justifyContent: "center", marginTop: "10px"}}>
+                            <div className="bounce1"></div>
+                            <div className="bounce2"></div>
+                            <div className="bounce3"></div>
+                        </div>
+                    ))}
                 </div>
             </div>
         );

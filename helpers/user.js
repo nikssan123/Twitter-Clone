@@ -55,8 +55,7 @@ exports.checkNotification = async (req, res, next) => {
 
 exports.getFollowers = async (req, res, next) => {
     try {
-        const user = await db.User.findById(req.params.id).populate("following", "username").exec();
-
+        const user = await db.User.findById(req.params.id).populate("following", "username profileImageUrl").exec();
         res.json(user.following);
     } catch (error) {
         return next(error);

@@ -131,7 +131,7 @@ class Settings extends React.Component{
                                             </div>
                                         </div>
                                         <div className="col-4 text-center" id="profile-image">
-                                            <img height="250" width="250" className="img-fluid" id="accImage" src={this.state.profilePic}/>
+                                            <img height="250" width="250" className="img-fluid" id="accImage" src={this.state.profilePic} alt="ProfilePic"/>
                                             <label id="profilePicLabel" className="btn btn-primary mt-4 btn-sm btn-md-lg" htmlFor="profilePic">Upload Picture</label>
                                             <input onChange={this.handleFileInput} style={{display: "none"}} type="file" name="profilePic" id="profilePic"/>
                                             {/* add onChange method -> save profile image -> preview it in the browser */}
@@ -146,7 +146,7 @@ class Settings extends React.Component{
                 {/* Modal */}
                 <Modal show={this.state.showModal} onHide={this.handleClose}>
                     <Modal.Header closeButton>
-                      <Modal.Title>Delete Account</Modal.Title>
+                        <Modal.Title>Delete Account</Modal.Title>
                     </Modal.Header>
 
                     <Modal.Body>

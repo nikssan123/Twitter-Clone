@@ -3,6 +3,7 @@ import { connect } from "react-redux";
 import { fetchUserInfo, followUser, unfollowUser, deleteMessage } from "../Store/Actions/user";
 import { Link } from "react-router-dom";
 import MessageItem from "../Components/MessageItem";
+import { Modal } from "react-bootstrap";
 import DefaultProfileImage from "../Images/default-profile-image.jpg";
 
 
@@ -18,7 +19,8 @@ class UserMessage extends React.Component{
             error: "",
             isFollowing: false,
             followers: 0,
-            followersList: []
+            followersList: [],
+            showModal: false
         }
 
         this.handleFollow = this.handleFollow.bind(this);
@@ -105,8 +107,14 @@ class UserMessage extends React.Component{
         });
     }
 
+    handleClose = e => {
+        this.setState({
+            showModal: false
+        });
+    }
+
     render(){
-        const { currentUser, user, messages, history } = this.props;
+        const { currentUser, user, messages } = this.props;
         
 
         let isSameUser = currentUser.user.id === user._id;
@@ -128,7 +136,17 @@ class UserMessage extends React.Component{
             userFollowers = this.state.followersList.map(u => {
                 return (
                     // <li key={u._id}><Link onClick={this.rerender} to={`/users/${u.username}`}>{u.username}</Link></li>
-                    <li key={u._id}>{u.username}</li>
+                    <li key={u._id} style={{listStyle: "none"}}>
+                        <img 
+                            style={{borderRadius: "18px", marginRight: "5px"}} 
+                            width="25"
+                            height="25" 
+                            src={u.profileImageUrl || DefaultProfileImage} 
+                            alt="user"
+                        />
+                        <Link to={`/users/${u.username}`}>{u.username}</Link>
+                        
+                    </li>
                 );
             }); 
         }else{
@@ -153,10 +171,11 @@ class UserMessage extends React.Component{
                         <div className="followers">
                             <div>
                                 <span className="email">{user.email}</span>
-                                <strong style={{color: "#007bff"}}> <a data-toggle="modal" href="#followers">Followers: </a></strong><span className="badge badge-secondary">{this.state.followers}</span>
+                                <strong style={{color: "#007bff", cursor: "pointer"}}> <a onClick={e => this.setState({showModal: true})}>Followers: </a></strong><span className="badge badge-secondary">{this.state.followers}</span>
                             </div>
                             <div>
                                 <div className="links">
+                                    {currentUser && isSameUser && (<Link style={{fontSize: "18px"}} to="/settings"><i className="mr-1 fa fa-cog" aria-hidden="true"></i>Settings</Link>)}
                                     {currentUser && !isSameUser && (<Link className="mb-3" to={`/chat/${user.username}`}>Direct Message</Link>)}
                                     {currentUser &&  !isSameUser && ( !this.state.isFollowing ?
                                         <button onClick={() => {this.handleFollow(user, currentUser)}} className="btn btn-primary ">Follow</button>
@@ -179,28 +198,26 @@ class UserMessage extends React.Component{
                     }
                 </div>
 
+                {/* Modal */}
+                <Modal show={this.state.showModal} onHide={this.handleClose}>
+                    <Modal.Header closeButton>
+                        <Modal.Title>Followers of {user.username}</Modal.Title>
+                    </Modal.Header>
+
+                    <Modal.Body>
+                        <p><strong>Followed by:</strong></p>
+                        <ul>
+                            {userFollowers}
+                        </ul>
+                    </Modal.Body>
+
+                    <Modal.Footer>
+                        <button onClick={this.handleClose} type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
+                    </Modal.Footer>
+
+                </Modal>
                
-                <div className={`modal fade `} id="followers" tabIndex="-1" role="dialog" aria-labelledby="showFollowers" aria-hidden="true">
-                    <div className="modal-dialog" role="document">
-                        <div className="modal-content">
-                            <div className="modal-header">
-                                <h5 className="modal-title" id="exampleModalLabel">Followers of {user.username}</h5>
-                                <button type="button" className="close" data-dismiss="modal" aria-label="Close">
-                                    <span aria-hidden="true">&times;</span>
-                                </button>
-                            </div>
-                            <div className="modal-body">
-                            <p><strong>Followed by:</strong></p>
-                            <ul>
-                                {userFollowers}
-                            </ul>
-                            </div>
-                            <div className="modal-footer">
-                                <button type="button" className="btn btn-danger" data-dismiss="modal">Close</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+               
             </div>
         );
     }

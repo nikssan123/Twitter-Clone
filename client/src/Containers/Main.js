@@ -5,6 +5,7 @@ import Homepage from "../Components/Homepage";
 import AuthForm from "../Components/AuthForm";
 import { authUser, updatePassword } from "../Store/Actions/auth";
 import { checkUserNotification, deleteNotification, fetchFollowers, getAllUsers, forgotPassword } from "../Store/Actions/user"
+import { toggleSidemenu } from "../Store/Actions/toggle";
 import { removeError } from "../Store/Actions/errors";
 import withAuth  from "../Hocs/withAuth";
 import MessageForm from "../Containers/MessageForm";
@@ -13,6 +14,7 @@ import Chat from "../Containers/Chat";
 import Settings from "../Containers/Settings";
 import Forgot from "../Components/PasswordReset/Forgot";
 import Reset from "../Components/PasswordReset/Reset";
+import Sidemenu from "../Components/Sidemenu";
 import { store } from 'react-notifications-component';
 import 'react-notifications-component/dist/theme.css';
 import "animate.css"
@@ -81,98 +83,103 @@ class Main extends React.Component{
     }
 
     render(){
-        const { authUser, errors, removeError, currentUser, forgotPassword, updatePassword } = this.props;
-        
+        const { authUser, errors, removeError, currentUser, forgotPassword, updatePassword, toggle, toggleSidemenu } = this.props;
+
         return ( 
+            <div> 
+                {currentUser.isAuthenticated && (
+                    <Sidemenu  toggleSidemenu={toggleSidemenu} toggle={toggle} currentUser={currentUser}/>
+                )} 
+                
+                <div className="container">
+                   
+                    <Switch>
+                        <Route exact path="/" render={props => <Homepage currentUser={currentUser} {...props} />} />
+                        <Route 
+                            exact 
+                            path="/signin" 
+                            render={props => {
+                                return(
+                                    <AuthForm 
+                                        removeError={removeError}
+                                        errors={errors}
+                                        onAuth={authUser}
+                                        buttonText="Log in" 
+                                        heading ="Welcome Back" 
+                                        {...props}
+                                        
+                                    />
+                                ) 
+                        }}/>
+                        <Route 
+                            exact 
+                            path="/signup" 
+                            render={props => {
+                                return(
+                                    <AuthForm 
+                                        removeError={removeError}
+                                        errors={errors}
+                                        onAuth={authUser}
+                                        signUp
+                                        buttonText="Sign up" 
+                                        heading ="Join Now" 
+                                        {...props}
+                                    />
+                                )
+                        }}/>
+                        <Route 
+                            exact
+                            path="/forgot"
+                            render={props => {
+                                return (
+                                    <Forgot 
+                                        currentUser={currentUser} 
+                                        forgotPassword={forgotPassword} 
+                                        alertMessage={errors.message}
+                                        {...props}
+                                    />
+                                )
+                            }}
+                        />
+                        <Route 
+                            exact
+                            path="/reset/:token"
+                            render={props => {
+                                return (
+                                    <Reset 
+                                        updatePassword={updatePassword}
+                                        alertMessage={errors.message}
+                                        {...props}
+                                    />
+                                )
+                            }}
+                        />
+                        <Route 
+                            exact
+                            path="/users/:id/messages/new" 
+                            component={withAuth(MessageForm)} 
+                        />
+                        <Route 
+                            exact
+                            path="/users/:username"
+                            render={props => (<UserShow  currentUser={currentUser} {...props}/>)}
+                            key={window.location.pathname}
+                        />
+                        <Route
+                            exact
+                            path="/chat/:username"
+                            // render={props => (<Chat {...props} />)}
+                            component={withAuth(Chat)}
+                        />
+                        <Route 
+                            exact
+                            path="/settings"
+                            component={withAuth(Settings)}
+                        />
+                    </Switch>
         
-            <div className="container">
-                
-                <Switch>
-                    <Route exact path="/" render={props => <Homepage currentUser={currentUser} {...props} />} />
-                    <Route 
-                        exact 
-                        path="/signin" 
-                        render={props => {
-                            return(
-                                <AuthForm 
-                                    removeError={removeError}
-                                    errors={errors}
-                                    onAuth={authUser}
-                                    buttonText="Log in" 
-                                    heading ="Welcome Back" 
-                                    {...props}
-                                    
-                                />
-                            ) 
-                    }}/>
-                    <Route 
-                        exact 
-                        path="/signup" 
-                        render={props => {
-                            return(
-                                <AuthForm 
-                                    removeError={removeError}
-                                    errors={errors}
-                                    onAuth={authUser}
-                                    signUp
-                                    buttonText="Sign up" 
-                                    heading ="Join Now" 
-                                    {...props}
-                                />
-                            )
-                    }}/>
-                    <Route 
-                        exact
-                        path="/forgot"
-                        render={props => {
-                            return (
-                                <Forgot 
-                                    currentUser={currentUser} 
-                                    forgotPassword={forgotPassword} 
-                                    alertMessage={errors.message}
-                                    {...props}
-                                />
-                            )
-                        }}
-                    />
-                    <Route 
-                        exact
-                        path="/reset/:token"
-                        render={props => {
-                            return (
-                                <Reset 
-                                    updatePassword={updatePassword}
-                                    alertMessage={errors.message}
-                                    {...props}
-                                />
-                            )
-                        }}
-                    />
-                    <Route 
-                        exact
-                        path="/users/:id/messages/new" 
-                        component={withAuth(MessageForm)} 
-                    />
-                    <Route 
-                        exact
-                        path="/users/:username"
-                        render={props => (<UserShow  currentUser={currentUser} {...props}/>)}
-                        key={window.location.pathname}
-                    />
-                    <Route
-                        exact
-                        path="/chat/:username"
-                        // render={props => (<Chat {...props} />)}
-                        component={withAuth(Chat)}
-                    />
-                    <Route 
-                        exact
-                        path="/settings"
-                        component={withAuth(Settings)}
-                    />
-                </Switch>
-    
-                
+                    
+                </div>
             </div>
         );
     }
@@ -183,6 +190,7 @@ function mapStateToProps(state){
         currentUser: state.currentUser,
         errors: state.errors,
         notifications: state.notifications,
+        toggle: state.toggleSidemenu.toggle
     }
 }
 
@@ -194,7 +202,8 @@ export default withRouter(connect(mapStateToProps, {
     deleteNotification, 
     fetchFollowers, 
     getAllUsers,
-    forgotPassword
+    forgotPassword,
+    toggleSidemenu,
 })(Main));
 
 
