@@ -31,7 +31,7 @@ class Chat extends React.Component{
     }
 
     componentDidMount(){
-        const host = window.location.protocol + "//" + window.location.hostname + ":8080";
+        const host = window.location.protocol + "//" + window.location.hostname;
         // console.log(host);
         const { currentUser, match } = this.props;
         const to = match.params.username;
