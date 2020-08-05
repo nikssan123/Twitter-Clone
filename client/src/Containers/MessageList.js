@@ -1,6 +1,6 @@
 import React from "react";
 import { connect } from "react-redux";
-import {fetchMessages, removeMessage} from "../Store/Actions/messages";
+import {fetchMessages, removeMessage, removeMessages} from "../Store/Actions/messages";
 import MessageItem from "../Components/MessageItem";
 import SearchBar from "../Components/Search";
 // import MessageForm from "../Containers/MessageForm";
@@ -13,7 +13,8 @@ class Messagelist extends React.Component{
         this.state = {
             pageNumber: 1,
             isLoading: false,
-            hasMore: true
+            hasMore: true,
+            messages: []
         }
     }
 
@@ -29,12 +30,21 @@ class Messagelist extends React.Component{
 
     componentDidMount(){
         // this.props.fetchMessages(this.state.pageNumber);
+        // if(this.props.messages.length === 0){
         this.loadData();
+        // }
+       
         window.addEventListener("scroll", this.handleScroll);
+
+        // this.props.history.listen(() => {
+        //     this.setState({})
+        // })
     }
 
     componentWillUnmount(){
         window.removeEventListener("scroll", this.handleScroll);
+        this.props.removeMessages();
+
     } 
 
     loadData(){
@@ -104,4 +114,4 @@ function mapStateToProps(state){
     };
 }
 
-export default connect(mapStateToProps, {fetchMessages, removeMessage})(Messagelist);
+export default connect(mapStateToProps, {fetchMessages, removeMessage, removeMessages})(Messagelist);

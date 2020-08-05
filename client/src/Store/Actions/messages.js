@@ -1,6 +1,6 @@
 import { apiCall } from "../../Services/api";
 import { addError } from "./errors";
-import { LOAD_MESSAGES, REMOVE_MESSAGE} from "../actionTypes";
+import { LOAD_MESSAGES, REMOVE_MESSAGE, REMOVE_MESSAGES} from "../actionTypes";
 
 
 export const loadMessages = messages => {
@@ -8,6 +8,12 @@ export const loadMessages = messages => {
         type: LOAD_MESSAGES,
         messages
     };
+}
+
+export const removeMessages = () => {
+    return {
+        type: REMOVE_MESSAGES
+    }
 }
 
 export const remove = id => {

@@ -2,7 +2,7 @@ require("dotenv").config();
 const mongoose = require("mongoose");
 
 mongoose.Promise = Promise;
-
+//"mongodb://localhost/warbler"
 mongoose.connect(process.env.MONGO_DB_CONNECTION, {
     keepAlive: true,
     useNewUrlParser: true,
