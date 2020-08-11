@@ -7,7 +7,7 @@ A live demo of the website can be found [here](http://warbler.fornaxelit.com)
 
 
 ### Preview
-![preview]()
+![preview](https://github.com/nikssan123/Twitter-Clone/blob/master/Images/warbler_preview.gif)
 
 ## Installation
 If you want to run the site on your local environment then first you should have npm installed and then run
