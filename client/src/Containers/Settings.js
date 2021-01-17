@@ -82,7 +82,7 @@ class Settings extends React.Component{
 
 
         this.props.editUser(data, this.props.currentUser.user.id).then(data => {
-            
+            //console.log(data);
         });        
     }
 
